@@ -39,13 +39,12 @@
   .wrap{max-width:1180px;margin:0 auto;padding:0 26px 120px;position:relative}
   .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
 
-  /* lang visibility */
-  [data-en]{display:none}
-  html[lang=en] [data-el]{display:none}
-  html[lang=en] [data-en]{display:revert}
-  span[data-el],span[data-en]{display:inline}
-  html[lang=en] span[data-el]{display:none}
-  html[lang=en] span[data-en]{display:inline}
+  /* lang visibility — Greek by default, English only when html[lang=en].
+     Default-hide English outright so both can never show, even before JS runs. */
+  [data-en]{display:none !important}
+  html[lang=en] [data-en]{display:revert !important}
+  html[lang=en] [data-el]{display:none !important}
+  html[lang=en] span[data-en]{display:inline !important}
 
   /* NAV */
   .nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0 30px;position:sticky;top:0;z-index:30;background:linear-gradient(180deg,var(--bg) 60%,transparent);backdrop-filter:blur(6px)}
@@ -67,9 +66,16 @@
 
   /* HERO */
   .hero{text-align:center;padding:38px 0 18px;max-width:920px;margin:0 auto}
-  h1{font-size:clamp(44px,8.4vw,100px);line-height:.97;margin:0 0 26px;font-weight:800;letter-spacing:-.035em}
-  h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% auto;animation:shimmer 6s linear infinite}
-  @keyframes shimmer{to{background-position:200% center}}
+  h1{font-size:clamp(32px,5.4vw,62px);line-height:1.04;margin:0 0 26px;font-weight:800;letter-spacing:-.03em;
+    text-shadow:0 1px 1px rgba(0,0,0,.5),0 4px 16px rgba(0,0,0,.45),0 0 38px rgba(21,200,192,.22);
+    animation:h1in .85s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes h1in{from{opacity:0;transform:translateY(18px) scale(.97);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
+  h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:220% auto;
+    animation:shimmer 4.5s linear infinite,gradpulse 3.2s ease-in-out infinite;
+    filter:drop-shadow(0 3px 16px rgba(39,224,210,.55)) drop-shadow(0 0 26px rgba(52,217,230,.4)) drop-shadow(0 0 50px rgba(95,240,224,.22));
+    position:relative;padding:0 .04em}
+  @keyframes shimmer{to{background-position:220% center}}
+  @keyframes gradpulse{0%,100%{filter:drop-shadow(0 3px 16px rgba(39,224,210,.5)) drop-shadow(0 0 24px rgba(52,217,230,.32)) drop-shadow(0 0 46px rgba(95,240,224,.18))}50%{filter:drop-shadow(0 4px 20px rgba(39,224,210,.75)) drop-shadow(0 0 38px rgba(52,217,230,.55)) drop-shadow(0 0 70px rgba(95,240,224,.35))}}
   .lede{font-size:clamp(17px,2.2vw,21px);color:var(--txt-2);max-width:34ch;margin:0 auto 36px;line-height:1.5}
   .herobtns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:26px}
   .pills{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;color:var(--mute);font-size:14px;font-weight:500}
