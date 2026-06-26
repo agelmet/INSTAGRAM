@@ -3,379 +3,487 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Who Doesn't Follow You Back</title>
+<title>Unfollow Lens — see who doesn't follow you back</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   :root{
-    --ink:#1c1a17;
-    --paper:#f6f1e7;
-    --paper-2:#efe8da;
-    --line:#d8cfbd;
-    --accent:#c2410c;       /* burnt sienna */
-    --accent-soft:#f0d9c8;
-    --mute:#7a7163;
-    --ok:#3f6212;
-    --card:#fffdf8;
-    --shadow:0 1px 0 rgba(28,26,23,.04), 0 12px 28px -18px rgba(28,26,23,.35);
+    --ink:#16140f;--ink-soft:#46412f;--paper:#faf6ec;--paper-2:#f2ecdd;
+    --line:#e2d9c4;--line-2:#cdc1a6;--accent:#b8460f;--accent-2:#e07a3e;
+    --accent-soft:#f6e0cf;--gold:#a9851f;--mute:#857c6a;--ok:#4d6a1e;
+    --ok-soft:#eef1df;--card:#fffdf7;--rose:#9a2d2d;
+    --shadow-sm:0 1px 0 rgba(22,20,15,.03),0 6px 16px -12px rgba(22,20,15,.4);
+    --shadow:0 1px 0 rgba(22,20,15,.04),0 22px 48px -28px rgba(22,20,15,.5);
   }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
+  *{box-sizing:border-box}html,body{margin:0;padding:0}
   body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
-    line-height:1.5;
-    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1200px 540px at 12% -8%,rgba(224,122,62,.10),transparent 60%),
+      radial-gradient(900px 480px at 105% 8%,rgba(169,133,31,.10),transparent 55%),
+      var(--paper);
+    color:var(--ink);font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
   }
-  .wrap{max-width:760px;margin:0 auto;padding:48px 24px 96px}
-  .eyebrow{
-    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
-    font-size:12px;letter-spacing:.22em;text-transform:uppercase;
-    color:var(--accent);margin:0 0 14px;font-weight:600;
-  }
-  h1{
-    font-size:clamp(34px,7vw,56px);line-height:1.02;margin:0 0 18px;
-    font-weight:600;letter-spacing:-.01em;
-  }
+  .wrap{max-width:780px;margin:0 auto;padding:54px 24px 110px}
+
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:40px}
+  .brand .mark{width:34px;height:34px;flex:0 0 auto}
+  .brand .name{font-weight:600;font-size:17px;letter-spacing:.01em}
+  .brand .name span{color:var(--accent)}
+  .eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 16px;font-weight:600}
+  h1{font-size:clamp(36px,7.2vw,60px);line-height:1.0;margin:0 0 20px;font-weight:600;letter-spacing:-.015em}
   h1 em{font-style:italic;color:var(--accent)}
-  .lede{font-size:18px;color:var(--mute);max-width:54ch;margin:0 0 36px}
-  .privacy{
-    display:inline-flex;align-items:center;gap:8px;
-    font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
-    color:var(--ok);background:#eef2e3;border:1px solid #d6deba;
-    padding:7px 12px;border-radius:999px;margin-bottom:34px;
-  }
+  .lede{font-size:18.5px;color:var(--ink-soft);max-width:55ch;margin:0 0 30px}
+  .privacy{display:inline-flex;align-items:center;gap:9px;font-family:ui-monospace,Menlo,monospace;
+    font-size:12.5px;color:var(--ok);background:var(--ok-soft);border:1px solid #d3dcb0;padding:8px 14px;border-radius:999px}
   .privacy svg{width:14px;height:14px}
 
-  /* dropzone */
-  .drop{
-    position:relative;border:1.5px dashed var(--line);border-radius:14px;
-    background:var(--card);padding:44px 28px;text-align:center;
-    transition:border-color .2s,background .2s,transform .12s;
-    cursor:pointer;box-shadow:var(--shadow);
-  }
-  .drop:hover{border-color:var(--accent)}
-  .drop.drag{border-color:var(--accent);background:#fffaf3;transform:translateY(-1px)}
-  .drop .zip{
-    width:54px;height:54px;margin:0 auto 16px;display:grid;place-items:center;
-    background:var(--accent-soft);border-radius:12px;color:var(--accent);
-  }
-  .drop .zip svg{width:26px;height:26px}
-  .drop h2{margin:0 0 6px;font-size:20px;font-weight:600}
-  .drop p{margin:0;color:var(--mute);font-size:14.5px}
-  .drop .fname{margin-top:14px;font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--ink)}
-  input[type=file]{display:none}
+  .steps{display:flex;gap:0;margin:46px 0 26px}
+  .steprail{flex:1;position:relative}
+  .steptab{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;font:inherit;
+    cursor:pointer;padding:0;color:var(--mute);text-align:left}
+  .steptab .dot{width:30px;height:30px;flex:0 0 auto;border-radius:50%;border:1.5px solid var(--line-2);
+    display:grid;place-items:center;font-family:ui-monospace,Menlo,monospace;font-size:13px;
+    background:var(--card);color:var(--mute);transition:.2s;font-weight:600}
+  .steptab .lab{font-size:14.5px;font-weight:600;transition:.2s}
+  .steptab[aria-current=true] .dot{background:var(--accent);border-color:var(--accent);color:#fff}
+  .steptab[aria-current=true] .lab{color:var(--ink)}
+  .steptab[data-done=true] .dot{background:var(--ok);border-color:var(--ok);color:#fff}
+  .stepline{position:absolute;top:15px;left:30px;right:6px;height:1.5px;background:var(--line-2)}
+  .steprail:last-child .stepline{display:none}
+  @media(max-width:560px){.steptab .lab{display:none}.steprail{flex:0 0 auto;margin-right:30px}.stepline{right:-30px}}
 
-  .btn{
-    appearance:none;border:none;cursor:pointer;font:inherit;
-    background:var(--ink);color:var(--paper);font-size:16px;font-weight:600;
-    padding:14px 30px;border-radius:10px;margin-top:22px;
-    transition:transform .12s,opacity .2s;letter-spacing:.01em;
-  }
+  .panel{display:none}
+  .panel.active{display:block;animation:rise .35s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+  .guide-head{padding:24px 26px 4px}
+  .guide-head h2{margin:0 0 6px;font-size:23px;font-weight:600}
+  .guide-head p{margin:0 0 4px;color:var(--mute);font-size:15px}
+  .ol{list-style:none;margin:14px 0 0;padding:0}
+  .ol li{counter-increment:g;display:flex;gap:14px;padding:15px 26px;border-top:1px solid var(--paper-2)}
+  .ol{counter-reset:g}
+  .ol li::before{content:counter(g);flex:0 0 auto;width:26px;height:26px;border-radius:50%;
+    background:var(--accent-soft);color:var(--accent);font-family:ui-monospace,Menlo,monospace;font-size:13px;
+    font-weight:600;display:grid;place-items:center;margin-top:1px}
+  .ol li .t{font-size:15.5px}.ol li .t b{font-weight:600}
+  .pill{display:inline-block;background:var(--paper-2);border:1px solid var(--line);border-radius:6px;
+    padding:1px 7px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--ink-soft)}
+  .guide-cta{display:flex;flex-wrap:wrap;gap:12px;padding:22px 26px 26px;border-top:1px solid var(--paper-2);align-items:center}
+  .hint{font-size:13.5px;color:var(--mute);flex:1;min-width:180px}
+
+  .btn{appearance:none;border:none;cursor:pointer;font:inherit;background:var(--ink);color:var(--paper);
+    font-size:15.5px;font-weight:600;padding:13px 26px;border-radius:11px;transition:transform .12s,box-shadow .2s;
+    display:inline-flex;align-items:center;gap:9px;box-shadow:0 8px 20px -12px rgba(22,20,15,.6)}
   .btn:hover{transform:translateY(-1px)}
-  .btn:disabled{opacity:.4;cursor:default;transform:none}
-  .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent);padding:9px 18px;font-size:14px;margin:0}
+  .btn:disabled{opacity:.38;cursor:default;transform:none;box-shadow:none}
+  .btn svg{width:16px;height:16px}
+  .btn.accent{background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+  .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent);box-shadow:none}
+  .btn.ghost:hover{background:var(--accent-soft)}
+  .btn.sm{font-size:14px;padding:9px 18px}
+  .nextrow{margin-top:20px;display:flex;justify-content:flex-end}
 
-  .err{
-    margin-top:18px;padding:13px 16px;border-radius:10px;
-    background:#fbe7e2;border:1px solid #f0c4b6;color:#9a3412;font-size:14.5px;
-  }
+  .drop{position:relative;border:1.6px dashed var(--line-2);border-radius:16px;background:var(--card);
+    padding:46px 28px;text-align:center;transition:.2s;cursor:pointer;box-shadow:var(--shadow-sm)}
+  .drop:hover{border-color:var(--accent)}
+  .drop.drag{border-color:var(--accent);background:#fffaf2;transform:translateY(-2px);box-shadow:var(--shadow)}
+  .drop .zip{width:58px;height:58px;margin:0 auto 16px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--accent-soft),#fbeede);border-radius:14px;color:var(--accent)}
+  .drop .zip svg{width:28px;height:28px}
+  .drop h2{margin:0 0 6px;font-size:21px;font-weight:600}
+  .drop p{margin:0;color:var(--mute);font-size:14.5px}
+  .drop code{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:var(--paper-2);padding:1px 6px;border-radius:5px}
+  .drop .fname{margin-top:15px;font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--ink)}
+  input[type=file]{display:none}
+  .analyzerow{text-align:center;margin-top:22px}
+  .err{margin-top:18px;padding:14px 16px;border-radius:12px;background:#fbe5de;border:1px solid #f0c2b1;color:#8c2f10;font-size:14.5px}
 
-  /* results */
-  .results{margin-top:14px;display:none}
-  .results.show{display:block}
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:8px 0 30px}
-  .stat{
-    background:var(--card);border:1px solid var(--line);border-radius:12px;
-    padding:18px 16px;box-shadow:var(--shadow);
-  }
-  .stat .n{font-size:34px;font-weight:600;line-height:1;letter-spacing:-.02em}
-  .stat .l{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--mute);margin-top:8px}
+  .results{display:none;margin-top:6px}.results.show{display:block;animation:rise .4s ease both}
+  .stats{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:13px;margin:6px 0 14px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 18px;box-shadow:var(--shadow-sm)}
+  .stat .n{font-size:38px;font-weight:600;line-height:1;letter-spacing:-.02em}
+  .stat .l{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute);margin-top:9px}
+  .stat.flag{background:linear-gradient(160deg,#fff7f1,#fffdf7);border-color:var(--accent-soft)}
   .stat.flag .n{color:var(--accent)}
 
-  .panelhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 6px}
-  .panelhead h3{font-size:22px;margin:0;font-weight:600}
-  .panelhead .sub{color:var(--mute);font-size:14px}
+  .delta{display:none;margin:0 0 22px;border-radius:14px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow-sm)}
+  .delta.show{display:block;animation:rise .4s ease both}
+  .delta .dhead{display:flex;align-items:center;gap:10px;padding:13px 18px;background:linear-gradient(135deg,#2a2620,#3a3327);color:var(--paper)}
+  .delta .dhead svg{width:17px;height:17px;color:var(--accent-2)}
+  .delta .dhead b{font-weight:600;font-size:15px}
+  .delta .dhead .when{margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;opacity:.7}
+  .delta .dbody{display:grid;grid-template-columns:1fr 1fr;background:var(--card)}
+  .delta .dcell{padding:16px 18px}
+  .delta .dcell:first-child{border-right:1px solid var(--paper-2)}
+  .delta .dcell .dn{font-size:26px;font-weight:600;line-height:1}
+  .delta .dcell .dl{font-size:13px;color:var(--mute);margin-top:4px}
+  .delta .dcell.lost .dn{color:var(--rose)}.delta .dcell.gain .dn{color:var(--ok)}
+  .delta .dnames{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--ink-soft);margin-top:8px;line-height:1.7;word-break:break-word}
+  .delta .dnames a{color:var(--accent);text-decoration:none}.delta .dnames a:hover{text-decoration:underline}
 
-  .search{
-    width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
-    background:var(--card);font:inherit;font-size:15px;margin:14px 0 4px;color:var(--ink);
-  }
-  .search:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
-
-  ul.list{list-style:none;margin:14px 0 0;padding:0;border:1px solid var(--line);
-    border-radius:12px;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
-  ul.list li{display:flex;align-items:center;justify-content:space-between;gap:12px;
-    padding:13px 16px;border-bottom:1px solid var(--paper-2)}
-  ul.list li:last-child{border-bottom:none}
-  ul.list li .u{font-weight:600;font-size:15.5px}
-  ul.list li a{color:var(--accent);text-decoration:none;font-family:ui-monospace,Menlo,monospace;
-    font-size:12.5px;letter-spacing:.04em;border:1px solid var(--accent-soft);padding:5px 11px;border-radius:8px}
-  ul.list li a:hover{background:var(--accent-soft)}
-  .empty{padding:26px 16px;text-align:center;color:var(--mute);font-size:14.5px}
-
-  .tabs{display:flex;gap:6px;margin:30px 0 0;flex-wrap:wrap}
-  .tab{appearance:none;border:1px solid var(--line);background:var(--card);font:inherit;
-    cursor:pointer;padding:9px 15px;border-radius:999px;font-size:14px;color:var(--mute);transition:.15s}
+  .tabs{display:flex;gap:7px;margin:8px 0 0;flex-wrap:wrap}
+  .tab{appearance:none;border:1px solid var(--line);background:var(--card);font:inherit;cursor:pointer;
+    padding:9px 16px;border-radius:999px;font-size:14px;color:var(--mute);transition:.15s}
+  .tab:hover{border-color:var(--line-2)}
   .tab[aria-selected=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
   .tab .c{font-family:ui-monospace,Menlo,monospace;font-size:12px;opacity:.7;margin-left:6px}
 
-  .toolbar{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .search{width:100%;padding:12px 15px;border:1px solid var(--line);border-radius:11px;background:var(--card);
+    font:inherit;font-size:15px;margin:16px 0 0;color:var(--ink)}
+  .search:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
 
-  details.faq{border-top:1px solid var(--line);padding:18px 0}
-  details.faq summary{cursor:pointer;font-weight:600;font-size:16px;list-style:none}
-  details.faq summary::-webkit-details-marker{display:none}
-  details.faq summary::before{content:"+";color:var(--accent);font-weight:700;margin-right:12px}
-  details.faq[open] summary::before{content:"–"}
-  details.faq .body{padding:14px 0 4px 26px;color:var(--mute);font-size:15px}
-  details.faq ol{margin:8px 0;padding-left:18px}
-  details.faq li{margin:5px 0}
-  .faqwrap{margin-top:60px}
-  .faqwrap h3{font-size:14px;font-family:ui-monospace,Menlo,monospace;letter-spacing:.18em;
-    text-transform:uppercase;color:var(--mute);margin:0 0 8px}
+  ul.list{list-style:none;margin:14px 0 0;padding:0;border:1px solid var(--line);border-radius:14px;
+    overflow:hidden;background:var(--card);box-shadow:var(--shadow-sm);max-height:520px;overflow-y:auto}
+  ul.list li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-bottom:1px solid var(--paper-2)}
+  ul.list li:last-child{border-bottom:none}
+  ul.list li .u{font-weight:600;font-size:15.5px;display:flex;align-items:center;gap:9px}
+  ul.list li .badge{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    padding:2px 7px;border-radius:6px;font-weight:600}
+  ul.list li .badge.new{background:#fbe5de;color:var(--rose)}
+  ul.list li a{color:var(--accent);text-decoration:none;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
+    border:1px solid var(--accent-soft);padding:5px 11px;border-radius:8px;transition:.15s}
+  ul.list li a:hover{background:var(--accent-soft)}
+  .empty{padding:30px 16px;text-align:center;color:var(--mute);font-size:14.5px}
 
-  .foot{margin-top:50px;color:var(--mute);font-size:13px;text-align:center}
-  @media (max-width:520px){
-    .stats{grid-template-columns:1fr 1fr}
-    .stat:first-child{grid-column:1/-1}
+  .toolbar{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center}
+
+  .snapwrap{margin-top:30px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:var(--shadow-sm);overflow:hidden}
+  .snaphead{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--paper-2)}
+  .snaphead svg{width:17px;height:17px;color:var(--gold)}
+  .snaphead b{font-size:15px;font-weight:600}
+  .snaphead .sub{color:var(--mute);font-size:13px;margin-left:auto}
+  .snaplist{list-style:none;margin:0;padding:0}
+  .snaplist li{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--paper-2);font-size:14.5px}
+  .snaplist li:last-child{border-bottom:none}
+  .snaplist .dt{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--mute)}
+  .snaplist .meta{flex:1}.snaplist .meta b{font-weight:600}
+  .snaplist .x{cursor:pointer;color:var(--mute);background:none;border:none;font-size:18px;line-height:1;padding:4px 8px;border-radius:6px}
+  .snaplist .x:hover{background:var(--paper-2);color:var(--rose)}
+  .snapempty{padding:20px 18px;color:var(--mute);font-size:14px;text-align:center}
+  .savebar{display:flex;gap:10px;align-items:center;padding:14px 18px;background:var(--paper-2)}
+  .savebar .t{flex:1;font-size:13.5px;color:var(--ink-soft)}
+
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:10px;font-size:14px;
+    box-shadow:var(--shadow);transition:.25s;z-index:50;pointer-events:none}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+  .foot{margin-top:56px;color:var(--mute);font-size:13px;text-align:center;line-height:1.7}
+  .foot a{color:var(--accent);text-decoration:none}
+
+  @media(max-width:520px){
+    .stats{grid-template-columns:1fr 1fr}.stat.flag{grid-column:1/-1}
+    .delta .dbody{grid-template-columns:1fr}
+    .delta .dcell:first-child{border-right:none;border-bottom:1px solid var(--paper-2)}
   }
-  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
+
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 40 40" fill="none">
+      <rect x="2" y="2" width="36" height="36" rx="11" fill="#16140f"/>
+      <circle cx="17" cy="18" r="8.5" stroke="#e07a3e" stroke-width="2.4"/>
+      <line x1="23.2" y1="24.2" x2="30" y2="31" stroke="#e07a3e" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M14 18.5l2.6 2.4L21 16" stroke="#faf6ec" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="name">Unfollow<span>Lens</span></span>
+  </div>
+
   <p class="eyebrow">Instagram · follower audit</p>
-  <h1>See who <em>doesn't follow</em> you back.</h1>
-  <p class="lede">Drop in the data ZIP that Instagram emails you. We read it right here in your browser to find the accounts you follow that don't follow you in return.</p>
+  <h1>See who <em>doesn't follow</em><br>you back.</h1>
+  <p class="lede">Two minutes, no password. Get the data file straight from Instagram, drop it in, and watch the one-way follows surface. Save a snapshot and we'll tell you exactly who slipped away next time.</p>
   <div class="privacy">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    No login, no password — nothing leaves this page.
+    No login, no password — everything runs in this browser.
   </div>
 
-  <div id="drop" class="drop" tabindex="0" role="button" aria-label="Upload your Instagram data ZIP file">
-    <div class="zip">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8v13H3V3h13"/><path d="M14 3h7v7"/><path d="M9 7h2M9 11h2M9 15h2"/></svg>
-    </div>
-    <h2>Drop your ZIP file here</h2>
-    <p>or click to choose it — the one named like <code>instagram-…​.zip</code></p>
-    <div class="fname" id="fname"></div>
-    <input type="file" id="file" accept=".zip,application/zip">
+  <div class="steps" id="steprail">
+    <div class="steprail"><button class="steptab" data-go="0" aria-current="true"><span class="dot">1</span><span class="lab">Get your file</span></button><div class="stepline"></div></div>
+    <div class="steprail"><button class="steptab" data-go="1"><span class="dot">2</span><span class="lab">Upload &amp; analyze</span></button><div class="stepline"></div></div>
+    <div class="steprail"><button class="steptab" data-go="2"><span class="dot">3</span><span class="lab">Results &amp; snapshots</span></button></div>
   </div>
 
-  <div style="text-align:center">
-    <button class="btn" id="analyze" disabled>Analyze</button>
-  </div>
-
-  <div id="err"></div>
-
-  <!-- RESULTS -->
-  <div class="results" id="results">
-    <div class="stats" id="stats"></div>
-
-    <div class="tabs" id="tabs" role="tablist">
-      <button class="tab" role="tab" data-tab="nonfollowers" aria-selected="true">Don't follow back <span class="c" id="c-non"></span></button>
-      <button class="tab" role="tab" data-tab="fans" aria-selected="false">You don't follow back <span class="c" id="c-fans"></span></button>
-      <button class="tab" role="tab" data-tab="mutual" aria-selected="false">Mutuals <span class="c" id="c-mut"></span></button>
-    </div>
-
-    <input class="search" id="search" placeholder="Filter usernames…" autocomplete="off">
-    <ul class="list" id="list"></ul>
-
-    <div class="toolbar">
-      <button class="btn ghost" id="copy">Copy usernames</button>
-      <button class="btn ghost" id="csv">Download CSV</button>
-    </div>
-  </div>
-
-  <!-- FAQ -->
-  <div class="faqwrap">
-    <h3>How to get the file</h3>
-    <details class="faq" open>
-      <summary>How do I download my Instagram data?</summary>
-      <div class="body">
-        Request the ZIP with your followers/following <code>.json</code> files:
-        <ol>
-          <li>Tap the ☰ menu in the top right of Instagram</li>
-          <li>Accounts Center → Your information and permissions</li>
-          <li>Export your information → Create export</li>
-          <li>Export to device → Customize information</li>
-          <li>Check only <strong>Followers and Following</strong></li>
-          <li>Set Date Range to <strong>All time</strong></li>
-          <li>Format → <strong>JSON</strong> → Start export</li>
-        </ol>
-        Instagram emails the ZIP when it's ready (minutes to ~48 hours). Upload it here as-is — no need to unzip.
+  <section class="panel active" id="p0">
+    <div class="card">
+      <div class="guide-head">
+        <h2>Request your data from Instagram</h2>
+        <p>This opens Instagram's official export page. Pick these exact options and it finishes in minutes, not days.</p>
       </div>
-    </details>
-    <details class="faq">
-      <summary>Do I need to give you my IG login?</summary>
-      <div class="body">No. The only thing you provide is the ZIP file, which contains who you follow and who follows you. All reading and comparing happens locally in your browser — the data never touches a server.</div>
-    </details>
-    <details class="faq">
-      <summary>It says my file is missing the lists.</summary>
-      <div class="body">Make sure you chose <strong>JSON</strong> (not HTML) and checked <strong>Followers and Following</strong> when exporting. The needed files live in <code>connections/followers_and_following/</code> as <code>followers_1.json</code> (sometimes split into _2, _3…) and <code>following.json</code>. If you exported HTML, request a new JSON export.</div>
-    </details>
-  </div>
+      <ol class="ol">
+        <li><div class="t">Tap the button below to open <b>Accounts Center → Export your information</b>.</div></li>
+        <li><div class="t">Choose <b>Create export</b> → <b>Export to device</b>.</div></li>
+        <li><div class="t">Hit <b>Customize information</b> and check <b>only</b> <span class="pill">Followers and Following</span>.</div></li>
+        <li><div class="t">Set Date range to <span class="pill">All time</span>.</div></li>
+        <li><div class="t">Set Format to <span class="pill">JSON</span> — this matters. HTML won't work.</div></li>
+        <li><div class="t">Tap <b>Start export</b>. Instagram emails you a ZIP, usually within minutes.</div></li>
+      </ol>
+      <div class="guide-cta">
+        <button class="btn accent" id="openIG">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+          Open Instagram export
+        </button>
+        <button class="btn ghost sm" id="haveItAlready">I already have the ZIP</button>
+        <span class="hint">Already got the email from Meta? Skip straight to upload.</span>
+      </div>
+    </div>
+    <div class="nextrow"><button class="btn" data-go="1">Next: upload →</button></div>
+  </section>
 
-  <p class="foot">Runs entirely in your browser using JSZip. Nothing is uploaded.</p>
+  <section class="panel" id="p1">
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload your Instagram data ZIP">
+      <div class="zip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 8v13H3V3h13"/><path d="M14 3h7v7"/><path d="M9 7h2M9 11h2M9 15h2"/></svg>
+      </div>
+      <h2>Drop your ZIP here</h2>
+      <p>or click to choose it — the file named like <code>instagram-…​.zip</code>. No need to unzip.</p>
+      <div class="fname" id="fname"></div>
+      <input type="file" id="file" accept=".zip,application/zip">
+    </div>
+    <div class="analyzerow">
+      <button class="btn accent" id="analyze" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke-linecap="round"/></svg>
+        Analyze
+      </button>
+    </div>
+    <div id="err"></div>
+  </section>
+
+  <section class="panel" id="p2">
+    <div class="results" id="results">
+      <div class="delta" id="delta">
+        <div class="dhead">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <b>Since your last snapshot</b>
+          <span class="when" id="deltaWhen"></span>
+        </div>
+        <div class="dbody">
+          <div class="dcell lost"><div class="dn" id="deltaLostN">0</div><div class="dl">unfollowed you</div><div class="dnames" id="deltaLost"></div></div>
+          <div class="dcell gain"><div class="dn" id="deltaGainN">0</div><div class="dl">new followers</div><div class="dnames" id="deltaGain"></div></div>
+        </div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="tabs" id="tabs" role="tablist">
+        <button class="tab" role="tab" data-tab="nonfollowers" aria-selected="true">Don't follow back <span class="c" id="c-non"></span></button>
+        <button class="tab" role="tab" data-tab="fans" aria-selected="false">You don't follow back <span class="c" id="c-fans"></span></button>
+        <button class="tab" role="tab" data-tab="mutual" aria-selected="false">Mutuals <span class="c" id="c-mut"></span></button>
+      </div>
+
+      <input class="search" id="search" placeholder="Filter usernames…" autocomplete="off">
+      <ul class="list" id="list"></ul>
+
+      <div class="toolbar">
+        <button class="btn ghost sm" id="copy">Copy usernames</button>
+        <button class="btn ghost sm" id="csv">Download CSV</button>
+      </div>
+
+      <div class="snapwrap">
+        <div class="snaphead">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.4"/><path d="M8 6l1.5-2.5h5L16 6"/></svg>
+          <b>Snapshots</b><span class="sub">stored only on this device</span>
+        </div>
+        <div class="savebar">
+          <span class="t">Save today's lists so next month we can show exactly who unfollowed you.</span>
+          <button class="btn sm" id="saveSnap">Save snapshot</button>
+        </div>
+        <ul class="snaplist" id="snaplist"></ul>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">
+    Built for privacy — parsing happens locally with JSZip; snapshots live in your browser's storage and never leave this device.<br>
+    Not affiliated with Instagram or Meta.
+  </p>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 (function(){
-  const $ = s => document.querySelector(s);
-  const drop=$("#drop"), fileInput=$("#file"), fname=$("#fname"),
-        analyzeBtn=$("#analyze"), errBox=$("#err"), results=$("#results"),
-        statsEl=$("#stats"), listEl=$("#list"), searchEl=$("#search");
-  let pickedFile=null, data=null, activeTab="nonfollowers";
+  const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+  const SNAP_KEY="unfollowlens_snapshots_v1";
+  let pickedFile=null,data=null,activeTab="nonfollowers",lastDelta=null;
 
-  function showErr(msg){ errBox.innerHTML = msg ? `<div class="err">${msg}</div>` : ""; }
+  let toastT;
+  function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1700);}
 
-  /* ---- file picking ---- */
+  function goStep(i){
+    $$(".panel").forEach((p,idx)=>p.classList.toggle("active",idx===i));
+    $$("#steprail .steptab").forEach((t,idx)=>t.setAttribute("aria-current",idx===i?"true":"false"));
+    window.scrollTo({top:$("#steprail").offsetTop-24,behavior:"smooth"});
+  }
+  $$("[data-go]").forEach(b=>b.addEventListener("click",()=>{
+    const i=+b.dataset.go;
+    if(i===2&&!data){toast("Analyze a file first");return;}
+    goStep(i);
+  }));
+  function markDone(i){$$("#steprail .steptab")[i].setAttribute("data-done","true");}
+
+  const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  $("#openIG").addEventListener("click",()=>{
+    const url=isMobile?"https://www.instagram.com/download/request/":"https://accountscenter.instagram.com/info_and_permissions/dyi/";
+    window.open(url,"_blank","noopener");markDone(0);
+  });
+  $("#haveItAlready").addEventListener("click",()=>{markDone(0);goStep(1);});
+
+  const drop=$("#drop"),fileInput=$("#file"),fname=$("#fname"),analyzeBtn=$("#analyze"),errBox=$("#err");
+  function showErr(m){errBox.innerHTML=m?`<div class="err">${m}</div>`:"";}
   drop.addEventListener("click",()=>fileInput.click());
-  drop.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){e.preventDefault();fileInput.click();} });
-  fileInput.addEventListener("change",()=>{ if(fileInput.files[0]) setFile(fileInput.files[0]); });
+  drop.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();fileInput.click();}});
+  fileInput.addEventListener("change",()=>{if(fileInput.files[0])setFile(fileInput.files[0]);});
   ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag");}));
   ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag");}));
-  drop.addEventListener("drop",e=>{ const f=e.dataTransfer.files[0]; if(f) setFile(f); });
-
+  drop.addEventListener("drop",e=>{const f=e.dataTransfer.files[0];if(f)setFile(f);});
   function setFile(f){
-    if(!/\.zip$/i.test(f.name)){ showErr("That's not a ZIP file. Upload the ZIP Instagram emailed you (don't unzip it first)."); return; }
-    pickedFile=f; fname.textContent="📦 "+f.name; analyzeBtn.disabled=false; showErr("");
-    results.classList.remove("show");
+    if(!/\.zip$/i.test(f.name)){showErr("That's not a ZIP file. Upload the ZIP Instagram emailed you — don't unzip it first.");return;}
+    pickedFile=f;fname.textContent="📦 "+f.name;analyzeBtn.disabled=false;showErr("");
   }
 
-  /* ---- parsing helpers ---- */
-  // Each entry: { string_list_data:[{value,href,timestamp}] }
   function extract(node){
     const out=new Map();
-    const add=arr=>{ if(!Array.isArray(arr))return;
-      for(const item of arr){
-        const sld = item && item.string_list_data;
-        if(Array.isArray(sld)&&sld.length){
-          const v=sld[0];
-          if(v && v.value) out.set(v.value.toLowerCase(),{value:v.value,href:v.href||("https://www.instagram.com/"+v.value)});
-        }
-      }
-    };
-    if(Array.isArray(node)) add(node);
+    const add=arr=>{if(!Array.isArray(arr))return;
+      for(const item of arr){const sld=item&&item.string_list_data;
+        if(Array.isArray(sld)&&sld.length){const v=sld[0];
+          if(v&&v.value)out.set(v.value.toLowerCase(),{value:v.value,href:v.href||("https://www.instagram.com/"+v.value)});}}};
+    if(Array.isArray(node))add(node);
     else if(node&&typeof node==="object"){
-      // common keys, else first array value found
-      const keyed = node.relationships_followers||node.relationships_following;
-      if(keyed) add(keyed);
-      else for(const k in node){ if(Array.isArray(node[k])) add(node[k]); }
+      const keyed=node.relationships_followers||node.relationships_following;
+      if(keyed)add(keyed);else for(const k in node)if(Array.isArray(node[k]))add(node[k]);
     }
     return out;
   }
 
   async function analyze(){
-    showErr(""); analyzeBtn.disabled=true; analyzeBtn.textContent="Reading…";
+    showErr("");analyzeBtn.disabled=true;analyzeBtn.innerHTML="Reading…";
     try{
-      const zip = await JSZip.loadAsync(pickedFile);
-      const followers=new Map(), following=new Map();
-      let foundFollowing=false, foundFollowers=false;
-
-      const entries=Object.values(zip.files).filter(f=>!f.dir && /\.json$/i.test(f.name));
-      for(const f of entries){
+      const zip=await JSZip.loadAsync(pickedFile);
+      const followers=new Map(),following=new Map();let fF=false,fG=false;
+      const files=Object.values(zip.files).filter(f=>!f.dir&&/\.json$/i.test(f.name));
+      for(const f of files){
         const base=f.name.split("/").pop().toLowerCase();
-        const isFollower = /^followers(_\d+)?\.json$/.test(base);
-        const isFollowing = /^following(_\d+)?\.json$/.test(base);
-        if(!isFollower && !isFollowing) continue;
-        let json;
-        try{ json=JSON.parse(await f.async("string")); }catch{ continue; }
-        const m=extract(json);
-        if(isFollower){ foundFollowers=true; m.forEach((v,k)=>followers.set(k,v)); }
-        else { foundFollowing=true; m.forEach((v,k)=>following.set(k,v)); }
+        const isFwr=/^followers(_\d+)?\.json$/.test(base);
+        const isFwg=/^following(_\d+)?\.json$/.test(base);
+        if(!isFwr&&!isFwg)continue;
+        let j;try{j=JSON.parse(await f.async("string"));}catch{continue;}
+        const m=extract(j);
+        if(isFwr){fF=true;m.forEach((v,k)=>followers.set(k,v));}
+        else{fG=true;m.forEach((v,k)=>following.set(k,v));}
       }
+      if(!fF&&!fG)throw new Error("Couldn't find the follower/following lists in this ZIP. Re-export in <b>JSON</b> format with <b>Followers and Following</b> selected.");
+      if(!fG)throw new Error("Found your followers but not your following list (<code>following.json</code>). Re-export with <b>both</b> lists checked.");
+      if(!fF)throw new Error("Found your following list but not your followers (<code>followers_1.json</code>). Re-export with <b>both</b> lists checked.");
 
-      if(!foundFollowers && !foundFollowing){
-        throw new Error("Couldn't find followers/following lists in this ZIP. Make sure you exported in <strong>JSON</strong> format and selected <strong>Followers and Following</strong>.");
-      }
-      if(!foundFollowing) throw new Error("Found your followers but not your following list (<code>following.json</code>). Re-export with <strong>Followers and Following</strong> both checked.");
-      if(!foundFollowers) throw new Error("Found your following list but not your followers (<code>followers_1.json</code>). Re-export with <strong>Followers and Following</strong> both checked.");
+      const nonfollowers=[],mutual=[],fans=[];
+      following.forEach((v,k)=>(followers.has(k)?mutual:nonfollowers).push(v));
+      followers.forEach((v,k)=>{if(!following.has(k))fans.push(v);});
+      const by=(a,b)=>a.value.toLowerCase().localeCompare(b.value.toLowerCase());
+      nonfollowers.sort(by);mutual.sort(by);fans.sort(by);
 
-      const nonfollowers=[], mutual=[], fans=[];
-      following.forEach((v,k)=>{ (followers.has(k)?mutual:nonfollowers).push(v); });
-      followers.forEach((v,k)=>{ if(!following.has(k)) fans.push(v); });
-      const byName=(a,b)=>a.value.toLowerCase().localeCompare(b.value.toLowerCase());
-      nonfollowers.sort(byName); mutual.sort(byName); fans.sort(byName);
-
-      data={
-        followersCount:followers.size, followingCount:following.size,
-        nonfollowers, mutual, fans
-      };
-      render();
-    }catch(e){
-      showErr(e.message||"Something went wrong reading that ZIP.");
-    }finally{
-      analyzeBtn.disabled=false; analyzeBtn.textContent="Analyze";
-    }
+      data={followersCount:followers.size,followingCount:following.size,nonfollowers,mutual,fans,followerKeys:Array.from(followers.keys())};
+      computeDelta();markDone(1);goStep(2);render();
+    }catch(e){showErr(e.message||"Something went wrong reading that ZIP.");}
+    finally{analyzeBtn.disabled=false;
+      analyzeBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke-linecap="round"/></svg> Analyze';}
   }
   analyzeBtn.addEventListener("click",analyze);
 
-  /* ---- rendering ---- */
+  function loadSnaps(){try{return JSON.parse(localStorage.getItem(SNAP_KEY))||[];}catch{return[];}}
+  function saveSnaps(s){try{localStorage.setItem(SNAP_KEY,JSON.stringify(s));}catch{toast("Couldn't save — storage blocked");}}
+
+  function computeDelta(){
+    lastDelta=null;const snaps=loadSnaps();if(!snaps.length||!data)return;
+    const prev=snaps[snaps.length-1];
+    const prevSet=new Set(prev.followerKeys),nowSet=new Set(data.followerKeys);
+    const nameOf=k=>{const hit=data.nonfollowers.concat(data.mutual,data.fans).find(x=>x.value.toLowerCase()===k);return hit?hit.value:k;};
+    const lost=prev.followerKeys.filter(k=>!nowSet.has(k)).map(k=>({value:nameOf(k),href:"https://www.instagram.com/"+nameOf(k)}));
+    const gained=data.followerKeys.filter(k=>!prevSet.has(k)).map(nameOf).map(v=>({value:v,href:"https://www.instagram.com/"+v}));
+    lastDelta={prev,lost,gained};
+  }
+
+  function saveSnapshot(){
+    if(!data)return;const snaps=loadSnaps();
+    snaps.push({ts:Date.now(),followers:data.followersCount,following:data.followingCount,nonfollowers:data.nonfollowers.length,followerKeys:data.followerKeys});
+    if(snaps.length>12)snaps.shift();
+    saveSnaps(snaps);renderSnaps();toast("Snapshot saved ✓");
+  }
+  $("#saveSnap").addEventListener("click",saveSnapshot);
+
+  function fmtDate(ts){const d=new Date(ts);
+    return d.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"})+" · "+d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});}
+  function relDate(ts){const days=Math.round((Date.now()-ts)/86400000);
+    if(days<=0)return"today";if(days===1)return"yesterday";if(days<30)return days+" days ago";
+    const m=Math.round(days/30);return m+(m===1?" month ago":" months ago");}
+
+  function renderSnaps(){
+    const snaps=loadSnaps().slice().reverse();const el=$("#snaplist");
+    if(!snaps.length){el.innerHTML='<li class="snapempty">No snapshots yet. Save one today, come back later, and the change report appears automatically.</li>';return;}
+    el.innerHTML=snaps.map(s=>`<li><span class="dt">${fmtDate(s.ts)}</span>
+      <span class="meta"><b>${s.followers}</b> followers · <b>${s.nonfollowers}</b> don't follow back</span>
+      <button class="x" data-del="${s.ts}" title="Delete snapshot">×</button></li>`).join("");
+    el.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{
+      saveSnaps(loadSnaps().filter(s=>s.ts!==+b.dataset.del));renderSnaps();toast("Snapshot deleted");}));
+  }
+
+  function renderDelta(){
+    const box=$("#delta");if(!lastDelta){box.classList.remove("show");return;}
+    box.classList.add("show");
+    $("#deltaWhen").textContent="vs "+relDate(lastDelta.prev.ts);
+    $("#deltaLostN").textContent=lastDelta.lost.length;
+    $("#deltaGainN").textContent=lastDelta.gained.length;
+    const fmt=arr=>arr.length?arr.slice(0,40).map(x=>`<a href="${x.href}" target="_blank" rel="noopener">@${esc(x.value)}</a>`).join("  ")+(arr.length>40?` +${arr.length-40} more`:""):"—";
+    $("#deltaLost").innerHTML=fmt(lastDelta.lost);
+    $("#deltaGain").innerHTML=fmt(lastDelta.gained);
+  }
+
   function render(){
-    statsEl.innerHTML=`
+    $("#stats").innerHTML=`
       <div class="stat flag"><div class="n">${data.nonfollowers.length}</div><div class="l">Don't follow back</div></div>
       <div class="stat"><div class="n">${data.followersCount}</div><div class="l">Followers</div></div>
       <div class="stat"><div class="n">${data.followingCount}</div><div class="l">Following</div></div>`;
     $("#c-non").textContent=data.nonfollowers.length;
     $("#c-fans").textContent=data.fans.length;
     $("#c-mut").textContent=data.mutual.length;
-    results.classList.add("show");
-    searchEl.value="";
-    renderList();
-    results.scrollIntoView({behavior:"smooth",block:"start"});
+    $("#results").classList.add("show");$("#search").value="";
+    renderDelta();renderSnaps();renderList();
   }
 
-  function currentRows(){
-    const key = activeTab==="nonfollowers"?"nonfollowers":activeTab==="fans"?"fans":"mutual";
-    const q=searchEl.value.trim().toLowerCase();
-    return data[key].filter(r=>!q||r.value.toLowerCase().includes(q));
-  }
-
+  function key(){return activeTab==="nonfollowers"?"nonfollowers":activeTab==="fans"?"fans":"mutual";}
+  function currentRows(){const q=$("#search").value.trim().toLowerCase();return data[key()].filter(r=>!q||r.value.toLowerCase().includes(q));}
+  function newlyLostSet(){if(activeTab!=="nonfollowers"||!lastDelta)return new Set();return new Set(lastDelta.lost.map(x=>x.value.toLowerCase()));}
   function renderList(){
-    const rows=currentRows();
+    const rows=currentRows(),lostSet=newlyLostSet();
     if(!rows.length){
-      const msg = data[activeTab==="nonfollowers"?"nonfollowers":activeTab==="fans"?"fans":"mutual"].length
-        ? "No matches." 
-        : (activeTab==="nonfollowers"?"Everyone you follow follows you back. 🎉"
-          :activeTab==="fans"?"You follow back everyone who follows you."
-          :"No mutual follows found.");
-      listEl.innerHTML=`<li class="empty" style="justify-content:center">${msg}</li>`;
-      return;
+      const total=data[key()].length;
+      const msg=total?"No matches.":(activeTab==="nonfollowers"?"Everyone you follow follows you back. 🎉":activeTab==="fans"?"You follow back everyone who follows you.":"No mutual follows found.");
+      $("#list").innerHTML=`<li class="empty">${msg}</li>`;return;
     }
-    listEl.innerHTML=rows.map(r=>`
-      <li><span class="u">@${escapeHtml(r.value)}</span>
-      <a href="${escapeAttr(r.href)}" target="_blank" rel="noopener noreferrer">Open ↗</a></li>`).join("");
+    $("#list").innerHTML=rows.map(r=>{
+      const isNew=lostSet.has(r.value.toLowerCase());
+      return `<li><span class="u">@${esc(r.value)}${isNew?'<span class="badge new">new</span>':''}</span>
+        <a href="${escAttr(r.href)}" target="_blank" rel="noopener">Open ↗</a></li>`;}).join("");
   }
+  $$(".tab").forEach(t=>t.addEventListener("click",()=>{
+    $$(".tab").forEach(x=>x.setAttribute("aria-selected","false"));
+    t.setAttribute("aria-selected","true");activeTab=t.dataset.tab;renderList();}));
+  $("#search").addEventListener("input",renderList);
 
-  document.querySelectorAll(".tab").forEach(t=>{
-    t.addEventListener("click",()=>{
-      document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected","false"));
-      t.setAttribute("aria-selected","true");
-      activeTab=t.dataset.tab; renderList();
-    });
-  });
-  searchEl.addEventListener("input",renderList);
-
-  $("#copy").addEventListener("click",()=>{
-    const txt=currentRows().map(r=>"@"+r.value).join("\n");
-    navigator.clipboard.writeText(txt).then(()=>{
-      const b=$("#copy"); const o=b.textContent; b.textContent="Copied ✓"; setTimeout(()=>b.textContent=o,1400);
-    });
-  });
+  $("#copy").addEventListener("click",()=>navigator.clipboard.writeText(currentRows().map(r=>"@"+r.value).join("\n")).then(()=>toast("Usernames copied ✓")));
   $("#csv").addEventListener("click",()=>{
-    const rows=currentRows();
-    const csv="username,profile_url\n"+rows.map(r=>`${r.value},${r.href}`).join("\n");
-    const blob=new Blob([csv],{type:"text/csv"});
-    const a=document.createElement("a");
-    a.href=URL.createObjectURL(blob);
-    a.download=`instagram-${activeTab}.csv`; a.click();
-    URL.revokeObjectURL(a.href);
-  });
+    const csv="username,profile_url\n"+currentRows().map(r=>`${r.value},${r.href}`).join("\n");
+    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+    a.download=`unfollowlens-${activeTab}.csv`;a.click();URL.revokeObjectURL(a.href);});
 
-  function escapeHtml(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
-  function escapeAttr(s){return String(s).replace(/"/g,"&quot;");}
+  function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+  function escAttr(s){return String(s).replace(/"/g,"&quot;");}
+
+  renderSnaps();
 })();
 </script>
 </body>
