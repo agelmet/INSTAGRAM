@@ -10,7 +10,7 @@
     --bg:#faf7ff;
     --ink:#1a1130;--ink-soft:#4a3d68;--mute:#8479a0;
     --card:#ffffff;--card-2:#f6f1ff;
-    --line:#e9ddf;--line-2:#d9c4f0;
+    --line:#ece0fb;--line-2:#d9c4f0;
     --violet:#7c2dff;--violet-2:#9d4eff;
     --magenta:#e0219c;--magenta-2:#ff4fc3;
     --cyan:#18c8e6;
@@ -28,57 +28,51 @@
   *{box-sizing:border-box}html,body{margin:0;padding:0}
   body{
     background:
-      radial-gradient(1300px 620px at 6% -12%,rgba(124,45,255,.16),transparent 58%),
-      radial-gradient(1100px 560px at 110% 2%,rgba(224,33,156,.16),transparent 55%),
+      radial-gradient(1300px 620px at 50% -14%,rgba(124,45,255,.16),transparent 58%),
+      radial-gradient(1100px 560px at 100% 4%,rgba(224,33,156,.13),transparent 55%),
+      radial-gradient(1100px 560px at 0% 4%,rgba(124,45,255,.10),transparent 55%),
       radial-gradient(900px 760px at 50% 122%,rgba(24,200,230,.10),transparent 60%),
       var(--bg);
     background-attachment:fixed;color:var(--ink);
     font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
     line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;
   }
-  .wrap{max-width:800px;margin:0 auto;padding:30px 24px 120px;position:relative}
+  /* symmetric, centered column on every screen */
+  .wrap{max-width:720px;margin:0 auto;padding:28px 24px 120px;position:relative;text-align:center}
+  .wrap > *{text-align:initial}
 
-  /* top bar */
-  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:38px}
-  .brand{display:flex;align-items:center;gap:12px}
-  .brand .mark{width:44px;height:44px;flex:0 0 auto;filter:drop-shadow(0 8px 18px rgba(124,45,255,.45))}
-  .brand .name{font-weight:700;font-size:19px;letter-spacing:-.01em;line-height:1}
+  /* top bar — centered brand */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;cursor:pointer}
+  .brand .mark{width:46px;height:46px;flex:0 0 auto;filter:drop-shadow(0 8px 18px rgba(124,45,255,.45));transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
+  .brand:hover .mark{transform:rotate(-6deg) scale(1.05)}
+  .brand .name{font-weight:700;font-size:20px;letter-spacing:-.01em;line-height:1}
   .brand .name b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
   .brand .name .tld{color:var(--mute);font-weight:600}
-  .trustchip{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,Menlo,monospace;
-    font-size:11.5px;font-weight:600;color:var(--violet);background:var(--soft);border:1px solid var(--line-2);
-    padding:7px 13px;border-radius:999px;box-shadow:var(--shadow-xs)}
+  .trustchip{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;font-weight:600;color:var(--violet);background:var(--soft);border:1px solid var(--line-2);padding:7px 13px;border-radius:999px;box-shadow:var(--shadow-xs);white-space:nowrap}
   .trustchip svg{width:14px;height:14px}
 
-  /* hero */
-  .eyebrow{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11.5px;letter-spacing:.26em;
-    text-transform:uppercase;font-weight:700;margin:0 0 16px;
-    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  h1{font-size:clamp(38px,7.6vw,64px);line-height:1.0;margin:0 0 20px;font-weight:600;letter-spacing:-.018em}
-  h1 em{font-style:italic;position:relative;white-space:nowrap;
-    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.02em;height:.11em;background:var(--grad);
-    border-radius:3px;opacity:.4;transform:scaleX(0);transform-origin:left;animation:underline 1s .4s cubic-bezier(.2,.8,.2,1) forwards}
+  /* hero — centered */
+  .hero{text-align:center;max-width:620px;margin:0 auto}
+  .eyebrow{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;font-weight:700;margin:14px 0 16px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  h1{font-size:clamp(36px,7vw,58px);line-height:1.02;margin:0 0 20px;font-weight:600;letter-spacing:-.018em}
+  h1 em{font-style:italic;position:relative;white-space:nowrap;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.02em;height:.11em;background:var(--grad);border-radius:3px;opacity:.4;transform:scaleX(0);transform-origin:center;animation:underline 1s .4s cubic-bezier(.2,.8,.2,1) forwards}
   @keyframes underline{to{transform:scaleX(1)}}
-  .lede{font-size:18.5px;color:var(--ink-soft);max-width:56ch;margin:0 0 26px}
+  .lede{font-size:18px;color:var(--ink-soft);margin:0 auto 26px;max-width:54ch}
 
-  /* trust badges row */
-  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
-  .badge2{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:var(--ink-soft);
-    background:var(--card);border:1px solid var(--line-2);padding:10px 15px;border-radius:14px;box-shadow:var(--shadow-sm)}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin:0 auto 8px;justify-content:center}
+  .badge2{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:var(--ink-soft);background:var(--card);border:1px solid var(--line-2);padding:10px 15px;border-radius:14px;box-shadow:var(--shadow-sm)}
   .badge2 .bi{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#fff;flex:0 0 auto}
-  .badge2 .bi.v{background:var(--grad)}.badge2 .bi.g{background:linear-gradient(135deg,var(--ok),#3fcf7f)}
-  .badge2 .bi.c{background:linear-gradient(135deg,var(--cyan),#5fe0f5)}
+  .badge2 .bi.v{background:var(--grad)}.badge2 .bi.g{background:linear-gradient(135deg,var(--ok),#3fcf7f)}.badge2 .bi.c{background:linear-gradient(135deg,var(--cyan),#5fe0f5)}
   .badge2 .bi svg{width:15px;height:15px}
 
-  /* steps */
-  .steps{display:flex;margin:46px 0 28px}
+  /* steps — centered rail */
+  .steps{display:flex;margin:44px auto 28px;max-width:560px}
   .steprail{flex:1;position:relative}
   .steptab{display:flex;align-items:center;gap:11px;width:100%;background:none;border:none;font:inherit;cursor:pointer;padding:0;color:var(--mute);text-align:left}
-  .steptab .dot{width:36px;height:36px;flex:0 0 auto;border-radius:50%;border:2px solid var(--line-2);
-    display:grid;place-items:center;font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);
-    color:var(--mute);transition:.3s cubic-bezier(.3,1.4,.5,1);font-weight:700;box-shadow:var(--shadow-xs)}
-  .steptab .lab{font-size:14.5px;font-weight:600;transition:.2s}
+  .steptab .dot{width:36px;height:36px;flex:0 0 auto;border-radius:50%;border:2px solid var(--line-2);display:grid;place-items:center;font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);color:var(--mute);transition:.3s cubic-bezier(.3,1.4,.5,1);font-weight:700;box-shadow:var(--shadow-xs)}
+  .steptab .lab{font-size:14px;font-weight:600;transition:.2s}
   .steptab[aria-current=true] .dot{background:var(--grad);border-color:transparent;color:#fff;transform:scale(1.14);box-shadow:var(--glow-v)}
   .steptab[aria-current=true] .lab{color:var(--ink)}
   .steptab[data-done=true] .dot{background:linear-gradient(135deg,var(--ok),#3fcf7f);border-color:transparent;color:#fff}
@@ -91,72 +85,85 @@
   .panel{display:none}.panel.active{display:block;animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
-  .card{background:var(--card);border:1px solid var(--line-2);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+  .card{background:var(--card);border:1px solid var(--line-2);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;position:relative;text-align:left}
   .card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-bright)}
-  .guide-head{padding:28px 28px 6px}
-  .guide-head h2{margin:0 0 7px;font-size:24px;font-weight:600;letter-spacing:-.01em}
+  .guide-head{padding:26px 28px 6px}
+  .guide-head h2{margin:0 0 7px;font-size:23px;font-weight:600;letter-spacing:-.01em}
   .guide-head p{margin:0 0 4px;color:var(--mute);font-size:15px}
   .ol{list-style:none;margin:16px 0 0;padding:0;counter-reset:g}
   .ol li{counter-increment:g;display:flex;gap:15px;padding:15px 28px;border-top:1px solid var(--card-2);transition:background .2s}
   .ol li:hover{background:var(--card-2)}
-  .ol li::before{content:counter(g);flex:0 0 auto;width:29px;height:29px;border-radius:50%;background:var(--grad);
-    color:#fff;font-family:ui-monospace,Menlo,monospace;font-size:13px;font-weight:700;display:grid;place-items:center;
-    margin-top:1px;box-shadow:0 4px 10px -3px rgba(124,45,255,.5)}
+  .ol li::before{content:counter(g);flex:0 0 auto;width:29px;height:29px;border-radius:50%;background:var(--grad);color:#fff;font-family:ui-monospace,Menlo,monospace;font-size:13px;font-weight:700;display:grid;place-items:center;margin-top:1px;box-shadow:0 4px 10px -3px rgba(124,45,255,.5)}
   .ol li .t{font-size:15.5px}.ol li .t b{font-weight:600}
-  .pill{display:inline-block;background:var(--soft);border:1px solid var(--line-2);border-radius:8px;padding:1px 8px;
-    font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--violet);font-weight:600}
-  .guide-cta{display:flex;flex-wrap:wrap;gap:12px;padding:24px 28px 28px;border-top:1px solid var(--card-2);align-items:center}
-  .hint{font-size:13.5px;color:var(--mute);flex:1;min-width:180px}
+  .pill{display:inline-block;background:var(--soft);border:1px solid var(--line-2);border-radius:8px;padding:1px 8px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--violet);font-weight:600}
 
-  .btn{appearance:none;border:none;cursor:pointer;font:inherit;background:var(--ink);color:#fff;font-size:15.5px;font-weight:600;
-    padding:14px 28px;border-radius:14px;transition:transform .14s cubic-bezier(.3,1.4,.5,1),box-shadow .2s,filter .2s;
-    display:inline-flex;align-items:center;gap:9px;box-shadow:0 10px 26px -10px rgba(26,17,48,.55);position:relative;overflow:hidden}
+  /* highlight callout */
+  .callout{margin:18px 28px 4px;padding:14px 16px;border-radius:14px;background:linear-gradient(160deg,#eafaf0,#fff);border:1px solid #bfe9cf;display:flex;gap:12px;align-items:flex-start}
+  .callout .ci{flex:0 0 auto;width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--ok),#3fcf7f);color:#fff;display:grid;place-items:center}
+  .callout .ci svg{width:17px;height:17px}
+  .callout .ct{font-size:14px;color:var(--ink-soft);line-height:1.55}.callout .ct b{color:var(--ink);font-weight:600}
+
+  .guide-cta{display:flex;flex-wrap:wrap;gap:12px;padding:22px 28px 28px;border-top:1px solid var(--card-2);align-items:center;justify-content:center}
+  .hint{font-size:13.5px;color:var(--mute);flex:1 1 100%;text-align:center;order:3}
+
+  .btn{appearance:none;border:none;cursor:pointer;font:inherit;background:var(--ink);color:#fff;font-size:15.5px;font-weight:600;padding:14px 28px;border-radius:14px;transition:transform .14s cubic-bezier(.3,1.4,.5,1),box-shadow .2s,filter .2s;display:inline-flex;align-items:center;gap:9px;box-shadow:0 10px 26px -10px rgba(26,17,48,.55);position:relative;overflow:hidden}
   .btn::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);transform:translateX(-120%);transition:transform .6s}
   .btn:hover{transform:translateY(-2px)}.btn:hover::after{transform:translateX(120%)}.btn:active{transform:translateY(0)}
   .btn:disabled{opacity:.4;cursor:default;transform:none;box-shadow:none}.btn:disabled::after{display:none}
   .btn svg{width:16px;height:16px;position:relative;z-index:1}.btn .lbl{position:relative;z-index:1}
-  .btn.accent{background:var(--grad);box-shadow:var(--glow-v)}
-  .btn.accent:hover{box-shadow:var(--glow-m)}
-  .btn.ghost{background:transparent;color:var(--violet);border:1.5px solid var(--line);box-shadow:none}
-  .btn.ghost:hover{background:var(--soft)}
+  .btn.accent{background:var(--grad);box-shadow:var(--glow-v)}.btn.accent:hover{box-shadow:var(--glow-m)}
+  .btn.ghost{background:transparent;color:var(--violet);border:1.5px solid var(--line);box-shadow:none}.btn.ghost:hover{background:var(--soft)}
   .btn.sm{font-size:14px;padding:10px 18px}
   .btn.pay{background:linear-gradient(135deg,var(--violet),var(--magenta),var(--magenta-2));box-shadow:var(--glow-m)}
-  .nextrow{margin-top:22px;display:flex;justify-content:flex-end}
+  .btn.big{font-size:17px;padding:16px 34px}
+  .nextrow{margin-top:22px;display:flex;justify-content:center}
 
-  .drop{position:relative;border:2px dashed var(--line);border-radius:22px;background:var(--card);padding:50px 28px;text-align:center;
-    transition:.25s cubic-bezier(.2,.8,.2,1);cursor:pointer;box-shadow:var(--shadow-sm)}
+  /* paywall panel */
+  .paywall{max-width:480px;margin:0 auto;text-align:center}
+  .pricecard{background:var(--card);border:1px solid var(--line-2);border-radius:22px;box-shadow:var(--shadow);padding:34px 28px;position:relative;overflow:hidden}
+  .pricecard::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-bright)}
+  .pricecard .lock{width:62px;height:62px;margin:0 auto 16px;border-radius:18px;background:var(--grad);color:#fff;display:grid;place-items:center;box-shadow:0 14px 30px -8px rgba(124,45,255,.6)}
+  .pricecard .lock svg{width:30px;height:30px}
+  .pricecard h2{margin:0 0 8px;font-size:24px;font-weight:600}
+  .pricecard p{margin:0 0 18px;color:var(--mute);font-size:15px}
+  .feat{list-style:none;margin:0 0 22px;padding:0;text-align:left;display:inline-block}
+  .feat li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:15px;color:var(--ink-soft)}
+  .feat li svg{width:19px;height:19px;flex:0 0 auto;color:var(--ok);margin-top:1px}
+  .paidnote{margin-top:16px;font-size:13px;color:var(--mute);line-height:1.6}
+  .paidback{margin-top:14px}
+  .securerow{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--mute)}
+  .securerow svg{width:14px;height:14px;color:var(--ok)}
+
+  .drop{position:relative;border:2px dashed var(--line);border-radius:22px;background:var(--card);padding:48px 28px;text-align:center;transition:.25s cubic-bezier(.2,.8,.2,1);cursor:pointer;box-shadow:var(--shadow-sm)}
   .drop:hover{border-color:var(--violet);transform:translateY(-2px);box-shadow:var(--shadow)}
   .drop.drag{border-color:var(--magenta);background:var(--card-2);transform:translateY(-4px) scale(1.01);box-shadow:var(--shadow-lg)}
-  .drop .zip{width:66px;height:66px;margin:0 auto 18px;display:grid;place-items:center;background:var(--grad);border-radius:20px;color:#fff;
-    box-shadow:0 14px 30px -8px rgba(124,45,255,.6);transition:.3s}
+  .drop .zip{width:66px;height:66px;margin:0 auto 18px;display:grid;place-items:center;background:var(--grad);border-radius:20px;color:#fff;box-shadow:0 14px 30px -8px rgba(124,45,255,.6);transition:.3s}
   .drop:hover .zip{transform:translateY(-2px) rotate(-4deg)}.drop.drag .zip{transform:scale(1.1) rotate(5deg)}
   .drop .zip svg{width:32px;height:32px}
   .drop h2{margin:0 0 7px;font-size:22px;font-weight:600}
   .drop p{margin:0;color:var(--mute);font-size:14.5px}
   .drop code{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:var(--soft);padding:1px 6px;border-radius:5px;color:var(--violet)}
-  .drop .fname{margin-top:16px;font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--ink);display:inline-flex;align-items:center;gap:7px;
-    background:var(--ok-soft);border:1px solid #b7ecca;padding:8px 14px;border-radius:12px;animation:pop .3s cubic-bezier(.3,1.4,.5,1) both;box-shadow:var(--shadow-xs)}
+  .drop .fname{margin-top:16px;font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--ink);display:inline-flex;align-items:center;gap:7px;background:var(--ok-soft);border:1px solid #b7ecca;padding:8px 14px;border-radius:12px;animation:pop .3s cubic-bezier(.3,1.4,.5,1) both;box-shadow:var(--shadow-xs)}
   @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
   input[type=file]{display:none}
   .analyzerow{text-align:center;margin-top:24px}
-  .paynote{margin-top:14px;font-size:13px;color:var(--mute)}
-  .err{margin-top:20px;padding:16px 18px;border-radius:16px;background:#ffe3ef;border:1px solid #f7b6d2;color:#a01453;font-size:14.5px;box-shadow:var(--shadow-sm);animation:rise .35s ease both}
+  .err{margin-top:20px;padding:16px 18px;border-radius:16px;background:#ffe3ef;border:1px solid #f7b6d2;color:#a01453;font-size:14.5px;box-shadow:var(--shadow-sm);animation:rise .35s ease both;text-align:left}
 
   .results{display:none;margin-top:6px}.results.show{display:block;animation:rise .5s ease both}
-  .stats{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:14px;margin:6px 0 16px}
-  .stat{background:var(--card);border:1px solid var(--line-2);border-radius:20px;padding:22px 20px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:6px 0 16px}
+  .stat{background:var(--card);border:1px solid var(--line-2);border-radius:20px;padding:22px 18px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s;text-align:center}
   .stat:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
-  .stat .n{font-size:42px;font-weight:600;line-height:1;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
-  .stat .l{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-top:10px}
-  .stat.flag{background:linear-gradient(160deg,#fbeeff,#fff);border-color:var(--line)}
-  .stat.flag::after{content:"";position:absolute;top:-34px;right:-34px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(224,33,156,.22),transparent 70%)}
-  .stat.flag .n{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat .n{font-size:40px;font-weight:600;line-height:1;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+  .stat .l{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-top:10px}
+  .stat.flag{background:linear-gradient(160deg,#fbeeff,#fff);border-color:var(--line);grid-column:1/-1}
+  .stat.flag .n{font-size:48px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat.flag::after{content:"";position:absolute;top:-34px;right:-34px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(224,33,156,.20),transparent 70%)}
+  @media(min-width:560px){.stats{grid-template-columns:1.3fr 1fr 1fr}.stat.flag{grid-column:auto}.stat.flag .n{font-size:42px}}
 
   .delta{display:none;margin:0 0 22px;border-radius:20px;overflow:hidden;border:1px solid var(--line-2);box-shadow:var(--shadow)}
   .delta.show{display:block;animation:rise .5s ease both}
   .delta .dhead{display:flex;align-items:center;gap:10px;padding:15px 20px;background:linear-gradient(135deg,#2a1758,#4a1d6e);color:#fff}
-  .delta .dhead svg{width:18px;height:18px;color:var(--magenta-2)}
-  .delta .dhead b{font-weight:600;font-size:15px}
+  .delta .dhead svg{width:18px;height:18px;color:var(--magenta-2)}.delta .dhead b{font-weight:600;font-size:15px}
   .delta .dhead .when{margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;opacity:.75}
   .delta .dbody{display:grid;grid-template-columns:1fr 1fr;background:var(--card)}
   .delta .dcell{padding:18px 20px}.delta .dcell:first-child{border-right:1px solid var(--card-2)}
@@ -171,7 +178,7 @@
   .note .ic svg{width:19px;height:19px}
   .note .tx{font-size:14px;color:var(--ink-soft);line-height:1.55}.note .tx b{font-weight:600;color:var(--ink)}
 
-  .tabs{display:flex;gap:8px;margin:8px 0 0;flex-wrap:wrap}
+  .tabs{display:flex;gap:8px;margin:8px 0 0;flex-wrap:wrap;justify-content:center}
   .tab{appearance:none;border:1px solid var(--line-2);background:var(--card);font:inherit;cursor:pointer;padding:10px 17px;border-radius:999px;font-size:14px;color:var(--mute);transition:.18s;box-shadow:var(--shadow-xs)}
   .tab:hover{border-color:var(--line);transform:translateY(-1px)}
   .tab[aria-selected=true]{background:var(--grad);color:#fff;border-color:transparent;box-shadow:var(--shadow-sm)}
@@ -192,7 +199,7 @@
   ul.list li a:hover{background:var(--soft);transform:translateY(-1px)}
   .empty{padding:34px 16px;text-align:center;color:var(--mute);font-size:14.5px}
 
-  .toolbar{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center}
+  .toolbar{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center;justify-content:center}
 
   .snapwrap{margin-top:32px;border:1px solid var(--line-2);border-radius:20px;background:var(--card);box-shadow:var(--shadow-sm);overflow:hidden}
   .snaphead{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--card-2)}
@@ -216,10 +223,9 @@
   .foot a{color:var(--violet);text-decoration:none}
 
   @media(max-width:520px){
-    .wrap{padding:24px 18px 110px}
-    .stats{grid-template-columns:1fr 1fr}.stat.flag{grid-column:1/-1}
+    .wrap{padding:22px 18px 110px}
+    .topbar .trustchip{display:none}
     .delta .dbody{grid-template-columns:1fr}.delta .dcell:first-child{border-right:none;border-bottom:1px solid var(--card-2)}
-    .guide-cta .hint{order:3}
   }
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -228,105 +234,127 @@
 <div class="wrap">
 
   <div class="topbar">
-    <div class="brand">
+    <a class="brand" id="brandHome" href="#" aria-label="Unfollowers.gr — αρχική">
       <svg class="mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="g1" x1="0" y1="0" x2="48" y2="48">
-            <stop offset="0" stop-color="#7c2dff"/><stop offset="1" stop-color="#e0219c"/>
-          </linearGradient>
-        </defs>
+        <defs><linearGradient id="g1" x1="0" y1="0" x2="48" y2="48"><stop offset="0" stop-color="#7c2dff"/><stop offset="1" stop-color="#e0219c"/></linearGradient></defs>
         <rect x="3" y="3" width="42" height="42" rx="13" fill="url(#g1)"/>
-        <!-- two figures, one breaking away -->
         <circle cx="19" cy="18" r="4.4" fill="#fff"/>
         <path d="M11.5 33c0-4.4 3.4-7.6 7.5-7.6s7.5 3.2 7.5 7.6" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none"/>
         <circle cx="33" cy="17" r="3.6" fill="#fff" opacity=".55"/>
         <path d="M27.5 31c0-3.5 2.6-6 5.5-6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".55"/>
-        <!-- broken link / slash -->
         <line x1="30" y1="12" x2="38" y2="22" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
-        <circle cx="29.5" cy="11.5" r="1.7" fill="#fff"/>
-        <circle cx="38.5" cy="22.5" r="1.7" fill="#fff"/>
+        <circle cx="29.5" cy="11.5" r="1.7" fill="#fff"/><circle cx="38.5" cy="22.5" r="1.7" fill="#fff"/>
       </svg>
       <span class="name"><b>Unfollowers</b><span class="tld">.gr</span></span>
-    </div>
+    </a>
     <div class="trustchip" title="Η ανάλυση γίνεται μόνο στη συσκευή σου">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       100% Ιδιωτικό
     </div>
   </div>
 
-  <p class="eyebrow">Instagram · έλεγχος ακολούθων</p>
-  <h1>Δες ποιος <em>δεν σε ακολουθεί</em> πίσω.</h1>
-  <p class="lede">Δύο λεπτά, χωρίς κωδικό. Κατέβασε το αρχείο δεδομένων κατευθείαν από το Instagram, ρίξ' το εδώ, και βλέπεις αμέσως ποιους ακολουθείς χωρίς να σε ακολουθούν κι εκείνοι. Αποθήκευσε ένα στιγμιότυπο και την επόμενη φορά θα σου πούμε ακριβώς ποιοι σε ξε-ακολούθησαν.</p>
-
-  <div class="badges">
-    <span class="badge2"><span class="bi v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>100% ακριβής ανάλυση των δεδομένων σου</span>
-    <span class="badge2"><span class="bi g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>Χωρίς κωδικό, χωρίς σύνδεση</span>
-    <span class="badge2"><span class="bi c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M2 12h20" stroke-linecap="round"/></svg></span>Τα δεδομένα δεν φεύγουν ποτέ από τη συσκευή σου</span>
+  <div class="hero">
+    <p class="eyebrow">Instagram · έλεγχος ακολούθων</p>
+    <h1>Δες ποιος <em>δεν σε ακολουθεί</em> πίσω.</h1>
+    <p class="lede">Δύο λεπτά, χωρίς κωδικό. Κατέβασε το αρχείο δεδομένων κατευθείαν από το Instagram, ρίξ' το εδώ, και βλέπεις αμέσως ποιους ακολουθείς χωρίς να σε ακολουθούν κι εκείνοι.</p>
+    <div class="badges">
+      <span class="badge2"><span class="bi v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>100% ακριβής ανάλυση των δεδομένων σου</span>
+      <span class="badge2"><span class="bi g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>Χωρίς κωδικό, χωρίς σύνδεση</span>
+      <span class="badge2"><span class="bi c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M2 12h20" stroke-linecap="round"/></svg></span>Τα δεδομένα μένουν στη συσκευή σου</span>
+    </div>
   </div>
 
   <div class="steps" id="steprail">
     <div class="steprail"><button class="steptab" data-go="0" aria-current="true"><span class="dot">1</span><span class="lab">Πάρε το αρχείο</span></button><div class="stepline"></div></div>
-    <div class="steprail"><button class="steptab" data-go="1"><span class="dot">2</span><span class="lab">Ανέβασε &amp; ανάλυσε</span></button><div class="stepline"></div></div>
-    <div class="steprail"><button class="steptab" data-go="2"><span class="dot">3</span><span class="lab">Αποτελέσματα</span></button></div>
+    <div class="steprail"><button class="steptab" data-go="1"><span class="dot">2</span><span class="lab">Πλήρωσε</span></button><div class="stepline"></div></div>
+    <div class="steprail"><button class="steptab" data-go="2"><span class="dot">3</span><span class="lab">Ανέβασε &amp; δες</span></button></div>
   </div>
 
-  <!-- PANEL 1 -->
+  <!-- PANEL 1 — guide -->
   <section class="panel active" id="p0">
     <div class="card">
       <div class="guide-head">
-        <h2>Ζήτα τα δεδομένα σου από το Instagram</h2>
-        <p>Το κουμπί ανοίγει την επίσημη σελίδα εξαγωγής του Instagram. Διάλεξε αυτές ακριβώς τις επιλογές και ετοιμάζεται σε λεπτά, όχι μέρες.</p>
+        <h2>Βήμα-βήμα: πάρε το αρχείο σου</h2>
+        <p>Ακολούθησε ακριβώς αυτά. Είναι εύκολο — σαν να ζητάς ένα αντίγραφο από το Instagram.</p>
+      </div>
+      <div class="callout">
+        <div class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="ct"><b>Το μόνο που χρειάζεται να κατεβάσεις είναι «Ακόλουθοι και Ακολουθείτε».</b> Τίποτα άλλο από τον λογαριασμό σου — όχι φωτογραφίες, όχι μηνύματα, όχι βίντεο. Έτσι το αρχείο είναι μικρό και έτοιμο σε λεπτά.</div>
       </div>
       <ol class="ol">
-        <li><div class="t">Πάτα το κουμπί πιο κάτω για να ανοίξεις το <b>Κέντρο λογαριασμών → Εξαγωγή των στοιχείων σου</b>.</div></li>
-        <li><div class="t">Διάλεξε <b>Δημιουργία εξαγωγής</b> → <b>Εξαγωγή στη συσκευή</b>.</div></li>
-        <li><div class="t">Πάτα <b>Προσαρμογή στοιχείων</b> και τσέκαρε <b>μόνο</b> <span class="pill">Ακόλουθοι και Ακολουθείτε</span>.</div></li>
+        <li><div class="t">Πάτα το κουμπί πιο κάτω. Ανοίγει το <b>Κέντρο λογαριασμών → Εξαγωγή των στοιχείων σου</b>.</div></li>
+        <li><div class="t">Πάτα <b>Δημιουργία εξαγωγής</b>, μετά <b>Εξαγωγή στη συσκευή</b>.</div></li>
+        <li><div class="t">Πάτα <b>Προσαρμογή στοιχείων</b>. Ξετσέκαρε τα πάντα και άφησε τσεκαρισμένο <b>μόνο</b> το <span class="pill">Ακόλουθοι και Ακολουθείτε</span>.</div></li>
         <li><div class="t">Βάλε εύρος ημερομηνιών <span class="pill">Όλο το διάστημα</span>.</div></li>
-        <li><div class="t">Βάλε μορφή <span class="pill">JSON</span> — αυτό είναι σημαντικό. Το HTML δεν δουλεύει.</div></li>
-        <li><div class="t">Πάτα <b>Έναρξη εξαγωγής</b>. Το Instagram σου στέλνει το ZIP με email, συνήθως μέσα σε λεπτά.</div></li>
+        <li><div class="t">Βάλε μορφή <span class="pill">JSON</span>. Πρόσεξε: το <b>HTML δεν δουλεύει</b> εδώ.</div></li>
+        <li><div class="t">Πάτα <b>Έναρξη εξαγωγής</b>. Το Instagram σου στέλνει ένα ZIP με email, συνήθως σε λίγα λεπτά. Κατέβασέ το.</div></li>
       </ol>
       <div class="guide-cta">
         <button class="btn accent" id="openIG">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
           <span class="lbl">Άνοιξε την εξαγωγή Instagram</span>
         </button>
-        <button class="btn ghost sm" id="haveItAlready">Έχω ήδη το ZIP</button>
-        <span class="hint">Ήρθε ήδη το email από τη Meta; Πήγαινε κατευθείαν στο ανέβασμα.</span>
+        <button class="btn ghost sm" id="haveItAlready">Το κατέβασα ήδη</button>
+        <span class="hint">Έχεις ήδη το ZIP από τη Meta; Προχώρα στο επόμενο βήμα.</span>
       </div>
     </div>
-    <div class="nextrow"><button class="btn" data-go="1"><span class="lbl">Επόμενο: ανέβασμα →</span></button></div>
+    <div class="nextrow"><button class="btn big" data-go="1"><span class="lbl">Επόμενο →</span></button></div>
   </section>
 
-  <!-- PANEL 2 -->
+  <!-- PANEL 2 — paywall -->
   <section class="panel" id="p1">
-    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Ανέβασε ZIP">
-      <div class="zip">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 8v13H3V3h13"/><path d="M14 3h7v7"/><path d="M9 7h2M9 11h2M9 15h2"/></svg>
+    <div class="paywall">
+      <div class="pricecard">
+        <div class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+        <h2>Ξεκλείδωσε την ανάλυσή σου</h2>
+        <p>Μία πληρωμή. Δες αμέσως ποιοι δεν σε ακολουθούν πίσω.</p>
+        <ul class="feat">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Πλήρης λίστα με όσους δεν σε ακολουθούν</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Ποιους ακολουθείς & ποιοι είναι αμοιβαίοι</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Στιγμιότυπα — δες ποιος σε ξε-ακολουθεί με τον καιρό</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Εξαγωγή σε CSV & σύνδεσμοι προφίλ</li>
+        </ul>
+        <div>
+          <button class="btn pay big" id="payBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20" stroke-linecap="round"/></svg>
+            <span class="lbl">Πλήρωσε & ξεκλείδωσε</span>
+          </button>
+        </div>
+        <div class="securerow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          Ασφαλής πληρωμή μέσω Stripe
+        </div>
+        <div class="paidback">
+          <button class="btn ghost sm" id="paidBtn">Πλήρωσα — συνέχισε</button>
+        </div>
+        <div class="paidnote">Αφού ολοκληρώσεις την πληρωμή στη σελίδα του Stripe, γύρνα εδώ και πάτα «Πλήρωσα — συνέχισε».</div>
       </div>
-      <h2>Ρίξε το ZIP σου εδώ</h2>
-      <p>ή κάνε κλικ για να το διαλέξεις — το αρχείο με όνομα σαν <code>instagram-…​.zip</code>. Δεν χρειάζεται αποσυμπίεση.</p>
-      <div class="fname" id="fname" style="display:none"></div>
-      <input type="file" id="file" accept=".zip,application/zip">
     </div>
-    <div class="analyzerow">
-      <button class="btn pay" id="analyze" disabled>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke-linecap="round"/></svg>
-        <span class="lbl">Ανάλυση</span>
-      </button>
-      <div class="paynote">Ασφαλής πληρωμή μέσω Stripe · ανάλυση με ένα κλικ</div>
-    </div>
-    <div id="err"></div>
+    <div id="payErr"></div>
   </section>
 
-  <!-- PANEL 3 -->
+  <!-- PANEL 3 — upload + results -->
   <section class="panel" id="p2">
+    <div id="uploadArea">
+      <div class="drop" id="drop" tabindex="0" role="button" aria-label="Ανέβασε ZIP">
+        <div class="zip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 8v13H3V3h13"/><path d="M14 3h7v7"/><path d="M9 7h2M9 11h2M9 15h2"/></svg></div>
+        <h2>Ρίξε το ZIP σου εδώ</h2>
+        <p>ή κάνε κλικ για να το διαλέξεις — το αρχείο με όνομα σαν <code>instagram-…​.zip</code>. Δεν χρειάζεται αποσυμπίεση.</p>
+        <div class="fname" id="fname" style="display:none"></div>
+        <input type="file" id="file" accept=".zip,application/zip">
+      </div>
+      <div class="analyzerow">
+        <button class="btn accent big" id="analyze" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke-linecap="round"/></svg>
+          <span class="lbl">Ανάλυση</span>
+        </button>
+      </div>
+      <div id="err"></div>
+    </div>
+
     <div class="results" id="results">
       <div class="delta" id="delta">
-        <div class="dhead">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <b>Από το τελευταίο σου στιγμιότυπο</b>
-          <span class="when" id="deltaWhen"></span>
-        </div>
+        <div class="dhead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Από το τελευταίο σου στιγμιότυπο</b><span class="when" id="deltaWhen"></span></div>
         <div class="dbody">
           <div class="dcell lost"><div class="dn" id="deltaLostN">0</div><div class="dl">σε ξε-ακολούθησαν</div><div class="dnames" id="deltaLost"></div></div>
           <div class="dcell gain"><div class="dn" id="deltaGainN">0</div><div class="dl">νέοι ακόλουθοι</div><div class="dnames" id="deltaGain"></div></div>
@@ -355,10 +383,7 @@
       </div>
 
       <div class="snapwrap">
-        <div class="snaphead">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.4"/><path d="M8 6l1.5-2.5h5L16 6"/></svg>
-          <b>Στιγμιότυπα</b><span class="sub">μένουν μόνο σε αυτή τη συσκευή</span>
-        </div>
+        <div class="snaphead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.4"/><path d="M8 6l1.5-2.5h5L16 6"/></svg><b>Στιγμιότυπα</b><span class="sub">μένουν μόνο σε αυτή τη συσκευή</span></div>
         <div class="savebar">
           <span class="t">Αποθήκευσε τις σημερινές λίστες ώστε τον επόμενο μήνα να σου δείξουμε ακριβώς ποιοι σε ξε-ακολούθησαν.</span>
           <button class="btn sm" id="saveSnap">Αποθήκευση στιγμιότυπου</button>
@@ -369,7 +394,7 @@
   </section>
 
   <p class="foot">
-    Φτιαγμένο για ιδιωτικότητα — η ανάλυση γίνεται τοπικά με JSZip· τα στιγμιότυπα μένουν στον αποθηκευτικό χώρο του browser σου και δεν φεύγουν ποτέ από αυτή τη συσκευή.<br>
+    Φτιαγμένο για ιδιωτικότητα — η ανάλυση γίνεται τοπικά με JSZip· τα στιγμιότυπα μένουν στον browser σου και δεν φεύγουν ποτέ από αυτή τη συσκευή.<br>
     Το Unfollowers.gr δεν σχετίζεται με το Instagram ή τη Meta.
   </p>
 </div>
@@ -380,27 +405,51 @@
 (function(){
   const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
   const SNAP_KEY="unfollowersgr_snapshots_v1";
+  const PAID_KEY="unfollowersgr_paid_v1";
   const STRIPE_URL="https://buy.stripe.com/eVq6oHcHL45g0Jke9Y3cc0w";
   let pickedFile=null,data=null,activeTab="nonfollowers",lastDelta=null;
 
   let toastT;
   function toast(m){const el=$("#toast");el.textContent=m;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),1800);}
 
+  /* ---------- payment state ----------
+     NOTE: A static page cannot truly verify a Stripe payment. This flag only
+     remembers, on THIS device, that the user clicked "I paid". For a real lock,
+     replace isPaid()/markPaid() with a check against your backend that confirms
+     the Stripe webhook (e.g. fetch a signed token using ?session_id=...). */
+  function isPaid(){try{return localStorage.getItem(PAID_KEY)==="1";}catch{return false;}}
+  function markPaid(){try{localStorage.setItem(PAID_KEY,"1");}catch{}}
+  // If returning from Stripe success URL with ?paid=1 (you can set this as the
+  // Stripe success redirect), auto-unlock.
+  try{ if(new URLSearchParams(location.search).get("paid")==="1") markPaid(); }catch{}
+
   function goStep(i){
+    // Guard: can't reach upload (step 3) without "paid" flag
+    if(i===2 && !isPaid()){ goStep(1); toast("Ολοκλήρωσε πρώτα την πληρωμή"); return; }
     $$(".panel").forEach((p,idx)=>p.classList.toggle("active",idx===i));
     $$("#steprail .steptab").forEach((tb,idx)=>tb.setAttribute("aria-current",idx===i?"true":"false"));
     window.scrollTo({top:$("#steprail").offsetTop-24,behavior:"smooth"});
   }
-  $$("[data-go]").forEach(b=>b.addEventListener("click",()=>{
-    const i=+b.dataset.go;
-    if(i===2&&!data){toast("Ανάλυσε πρώτα ένα αρχείο");return;}
-    goStep(i);
-  }));
+  $$("[data-go]").forEach(b=>b.addEventListener("click",()=>goStep(+b.dataset.go)));
   function markDone(i){
     $$("#steprail .steptab")[i].setAttribute("data-done","true");
     const rail=$$("#steprail .steprail")[i];if(rail)rail.setAttribute("data-filled","true");
   }
 
+  /* ---------- logo → home ---------- */
+  $("#brandHome").addEventListener("click",e=>{
+    e.preventDefault();
+    $$(".steptab").forEach(t=>t.removeAttribute("data-done"));
+    $$(".steprail").forEach(r=>r.removeAttribute("data-filled"));
+    goStepHome();
+  });
+  function goStepHome(){
+    $$(".panel").forEach((p,idx)=>p.classList.toggle("active",idx===0));
+    $$("#steprail .steptab").forEach((tb,idx)=>tb.setAttribute("aria-current",idx===0?"true":"false"));
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  /* ---------- step 1: Instagram deep link ---------- */
   const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   $("#openIG").addEventListener("click",()=>{
     const url=isMobile?"https://www.instagram.com/download/request/":"https://accountscenter.instagram.com/info_and_permissions/dyi/";
@@ -408,6 +457,17 @@
   });
   $("#haveItAlready").addEventListener("click",()=>{markDone(0);goStep(1);});
 
+  /* ---------- step 2: payment ---------- */
+  $("#payBtn").addEventListener("click",()=>{
+    window.open(STRIPE_URL,"_blank","noopener");
+  });
+  $("#paidBtn").addEventListener("click",()=>{
+    markPaid();markDone(1);
+    toast("Ξεκλειδώθηκε ✓");
+    goStep(2);
+  });
+
+  /* ---------- step 3: file pick ---------- */
   const drop=$("#drop"),fileInput=$("#file"),fname=$("#fname"),analyzeBtn=$("#analyze"),errBox=$("#err");
   function showErr(m){errBox.innerHTML=m?`<div class="err">${m}</div>`:"";}
   drop.addEventListener("click",()=>fileInput.click());
@@ -421,10 +481,7 @@
     pickedFile=f;fname.textContent="📦 "+f.name;fname.style.display="inline-flex";analyzeBtn.disabled=false;showErr("");
   }
 
-  /* ===== Stripe: open payment in new tab, then run analysis ===== */
-  function openStripe(){ try{ window.open(STRIPE_URL,"_blank","noopener"); }catch(e){} }
-
-  /* ================= VERIFIED PARSING ENGINE ================= */
+  /* ============ VERIFIED PARSING ENGINE ============ */
   function handleFromHref(href){
     if(!href)return"";
     try{const m=String(href).match(/instagram\.com\/(?:_u\/)?([^\/?#]+)/i);return m?decodeURIComponent(m[1]):"";}catch{return"";}
@@ -454,6 +511,7 @@
   }
 
   async function analyze(){
+    if(!isPaid()){goStep(1);toast("Ολοκλήρωσε πρώτα την πληρωμή");return;}
     showErr("");analyzeBtn.disabled=true;analyzeBtn.querySelector(".lbl").textContent="Διαβάζω…";
     try{
       const zip=await JSZip.loadAsync(pickedFile);
@@ -491,12 +549,11 @@
       const by=(a,b)=>a.value.toLowerCase().localeCompare(b.value.toLowerCase());
       nonfollowers.sort(by);mutual.sort(by);fans.sort(by);
       data={followersCount:followers.size,followingCount:following.size,nonfollowers,mutual,fans,followerKeys:Array.from(followers.keys())};
-      computeDelta();markDone(1);goStep(2);render();
+      computeDelta();$("#uploadArea").style.display="none";render();
     }catch(e){showErr(e.message||"Κάτι πήγε στραβά στην ανάγνωση του ZIP.");}
     finally{analyzeBtn.disabled=false;analyzeBtn.querySelector(".lbl").textContent="Ανάλυση";}
   }
-  // Pay button: open Stripe, then analyze (no gate — payment is not verified client-side)
-  analyzeBtn.addEventListener("click",()=>{ openStripe(); analyze(); });
+  analyzeBtn.addEventListener("click",analyze);
 
   function loadSnaps(){try{return JSON.parse(localStorage.getItem(SNAP_KEY))||[];}catch{return[];}}
   function saveSnaps(s){try{localStorage.setItem(SNAP_KEY,JSON.stringify(s));}catch{toast("Δεν αποθηκεύτηκε — ο αποθηκευτικός χώρος είναι φραγμένος");}}
@@ -517,46 +574,31 @@
   }
   $("#saveSnap").addEventListener("click",saveSnapshot);
 
-  function fmtDate(ts){const d=new Date(ts);
-    return d.toLocaleDateString("el-GR",{year:"numeric",month:"short",day:"numeric"})+" · "+d.toLocaleTimeString("el-GR",{hour:"2-digit",minute:"2-digit"});}
-  function relDate(ts){const days=Math.round((Date.now()-ts)/86400000);
-    if(days<=0)return"σήμερα";if(days===1)return"χθες";if(days<30)return days+" μέρες πριν";
-    const m=Math.round(days/30);return m===1?"1 μήνα πριν":m+" μήνες πριν";}
+  function fmtDate(ts){const d=new Date(ts);return d.toLocaleDateString("el-GR",{year:"numeric",month:"short",day:"numeric"})+" · "+d.toLocaleTimeString("el-GR",{hour:"2-digit",minute:"2-digit"});}
+  function relDate(ts){const days=Math.round((Date.now()-ts)/86400000);if(days<=0)return"σήμερα";if(days===1)return"χθες";if(days<30)return days+" μέρες πριν";const m=Math.round(days/30);return m===1?"1 μήνα πριν":m+" μήνες πριν";}
 
   function renderSnaps(){
     const snaps=loadSnaps().slice().reverse();const el=$("#snaplist");
     if(!snaps.length){el.innerHTML='<li class="snapempty">Κανένα στιγμιότυπο ακόμη. Αποθήκευσε ένα σήμερα, γύρνα αργότερα, και η αναφορά αλλαγών εμφανίζεται αυτόματα.</li>';return;}
-    el.innerHTML=snaps.map(s=>`<li><span class="dt">${fmtDate(s.ts)}</span>
-      <span class="meta"><b>${s.followers}</b> ακόλουθοι · <b>${s.nonfollowers}</b> δεν σε ακολουθούν</span>
-      <button class="x" data-del="${s.ts}" title="Διαγραφή στιγμιότυπου">×</button></li>`).join("");
-    el.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{
-      saveSnaps(loadSnaps().filter(s=>s.ts!==+b.dataset.del));renderSnaps();toast("Το στιγμιότυπο διαγράφηκε");}));
+    el.innerHTML=snaps.map(s=>`<li><span class="dt">${fmtDate(s.ts)}</span><span class="meta"><b>${s.followers}</b> ακόλουθοι · <b>${s.nonfollowers}</b> δεν σε ακολουθούν</span><button class="x" data-del="${s.ts}" title="Διαγραφή στιγμιότυπου">×</button></li>`).join("");
+    el.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{saveSnaps(loadSnaps().filter(s=>s.ts!==+b.dataset.del));renderSnaps();toast("Το στιγμιότυπο διαγράφηκε");}));
   }
   function renderDelta(){
     const box=$("#delta");if(!lastDelta){box.classList.remove("show");return;}
     box.classList.add("show");
     $("#deltaWhen").textContent="σε σχέση με "+relDate(lastDelta.prev.ts);
-    $("#deltaLostN").textContent=lastDelta.lost.length;
-    $("#deltaGainN").textContent=lastDelta.gained.length;
+    $("#deltaLostN").textContent=lastDelta.lost.length;$("#deltaGainN").textContent=lastDelta.gained.length;
     const fmt=arr=>arr.length?arr.slice(0,40).map(x=>`<a href="${x.href}" target="_blank" rel="noopener">@${esc(x.value)}</a>`).join("  ")+(arr.length>40?" +"+(arr.length-40)+" ακόμη":""):"—";
-    $("#deltaLost").innerHTML=fmt(lastDelta.lost);
-    $("#deltaGain").innerHTML=fmt(lastDelta.gained);
+    $("#deltaLost").innerHTML=fmt(lastDelta.lost);$("#deltaGain").innerHTML=fmt(lastDelta.gained);
   }
-  function animateCount(el,target){
-    const dur=700,start=performance.now();
-    function step(now){const p=Math.min(1,(now-start)/dur);const e=1-Math.pow(1-p,3);
-      el.textContent=Math.round(target*e);if(p<1)requestAnimationFrame(step);}
-    requestAnimationFrame(step);
-  }
+  function animateCount(el,target){const dur=700,start=performance.now();function step(now){const p=Math.min(1,(now-start)/dur);const e=1-Math.pow(1-p,3);el.textContent=Math.round(target*e);if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
   function render(){
     $("#stats").innerHTML=`
       <div class="stat flag"><div class="n" data-target="${data.nonfollowers.length}">0</div><div class="l">Δεν σε ακολουθούν πίσω</div></div>
       <div class="stat"><div class="n" data-target="${data.followersCount}">0</div><div class="l">Ακόλουθοι</div></div>
       <div class="stat"><div class="n" data-target="${data.followingCount}">0</div><div class="l">Ακολουθείς</div></div>`;
     $$("#stats .n").forEach(el=>animateCount(el,+el.dataset.target));
-    $("#c-non").textContent=data.nonfollowers.length;
-    $("#c-fans").textContent=data.fans.length;
-    $("#c-mut").textContent=data.mutual.length;
+    $("#c-non").textContent=data.nonfollowers.length;$("#c-fans").textContent=data.fans.length;$("#c-mut").textContent=data.mutual.length;
     $("#results").classList.add("show");$("#search").value="";
     renderDelta();renderSnaps();renderList();
   }
@@ -571,25 +613,19 @@
       const msg=total?"Καμία αντιστοίχιση.":(activeTab==="nonfollowers"?"Όλοι όσοι ακολουθείς σε ακολουθούν πίσω. 🎉":activeTab==="fans"?"Ακολουθείς πίσω όλους όσους σε ακολουθούν.":"Δεν βρέθηκαν αμοιβαίες ακολουθήσεις.");
       $("#list").innerHTML=`<li class="empty">${msg}</li>`;return;
     }
-    $("#list").innerHTML=rows.map((r,i)=>{
-      const isNew=lostSet.has(r.value.toLowerCase());
-      return `<li style="animation-delay:${Math.min(i*12,300)}ms"><span class="u"><span class="handle">@${esc(r.value)}</span>${isNew?'<span class="badge new">νέο</span>':''}</span>
-        <a href="${escAttr(r.href)}" target="_blank" rel="noopener">Άνοιγμα ↗</a></li>`;}).join("");
+    $("#list").innerHTML=rows.map((r,i)=>{const isNew=lostSet.has(r.value.toLowerCase());
+      return `<li style="animation-delay:${Math.min(i*12,300)}ms"><span class="u"><span class="handle">@${esc(r.value)}</span>${isNew?'<span class="badge new">νέο</span>':''}</span><a href="${escAttr(r.href)}" target="_blank" rel="noopener">Άνοιγμα ↗</a></li>`;}).join("");
   }
-  $$(".tab").forEach(tb=>tb.addEventListener("click",()=>{
-    $$(".tab").forEach(x=>x.setAttribute("aria-selected","false"));
-    tb.setAttribute("aria-selected","true");activeTab=tb.dataset.tab;renderList();}));
+  $$(".tab").forEach(tb=>tb.addEventListener("click",()=>{$$(".tab").forEach(x=>x.setAttribute("aria-selected","false"));tb.setAttribute("aria-selected","true");activeTab=tb.dataset.tab;renderList();}));
   $("#search").addEventListener("input",renderList);
-
   $("#copy").addEventListener("click",()=>navigator.clipboard.writeText(currentRows().map(r=>"@"+r.value).join("\n")).then(()=>toast("Τα ονόματα αντιγράφηκαν ✓")));
-  $("#csv").addEventListener("click",()=>{
-    const csv="username,profile_url\n"+currentRows().map(r=>`${r.value},${r.href}`).join("\n");
-    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
-    a.download=`unfollowers-gr-${activeTab}.csv`;a.click();URL.revokeObjectURL(a.href);});
+  $("#csv").addEventListener("click",()=>{const csv="username,profile_url\n"+currentRows().map(r=>`${r.value},${r.href}`).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download=`unfollowers-gr-${activeTab}.csv`;a.click();URL.revokeObjectURL(a.href);});
 
   function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
   function escAttr(s){return String(s).replace(/"/g,"&quot;");}
 
+  // if already paid (returning user this session/device), pre-mark step 2 done
+  if(isPaid())markDone(1);
   renderSnaps();
 })();
 </script>
