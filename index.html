@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Who Doesn't Follow You Back</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{
+    --ink:#1c1a17;
+    --paper:#f6f1e7;
+    --paper-2:#efe8da;
+    --line:#d8cfbd;
+    --accent:#c2410c;       /* burnt sienna */
+    --accent-soft:#f0d9c8;
+    --mute:#7a7163;
+    --ok:#3f6212;
+    --card:#fffdf8;
+    --shadow:0 1px 0 rgba(28,26,23,.04), 0 12px 28px -18px rgba(28,26,23,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:48px 24px 96px}
+  .eyebrow{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 14px;font-weight:600;
+  }
+  h1{
+    font-size:clamp(34px,7vw,56px);line-height:1.02;margin:0 0 18px;
+    font-weight:600;letter-spacing:-.01em;
+  }
+  h1 em{font-style:italic;color:var(--accent)}
+  .lede{font-size:18px;color:var(--mute);max-width:54ch;margin:0 0 36px}
+  .privacy{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
+    color:var(--ok);background:#eef2e3;border:1px solid #d6deba;
+    padding:7px 12px;border-radius:999px;margin-bottom:34px;
+  }
+  .privacy svg{width:14px;height:14px}
+
+  /* dropzone */
+  .drop{
+    position:relative;border:1.5px dashed var(--line);border-radius:14px;
+    background:var(--card);padding:44px 28px;text-align:center;
+    transition:border-color .2s,background .2s,transform .12s;
+    cursor:pointer;box-shadow:var(--shadow);
+  }
+  .drop:hover{border-color:var(--accent)}
+  .drop.drag{border-color:var(--accent);background:#fffaf3;transform:translateY(-1px)}
+  .drop .zip{
+    width:54px;height:54px;margin:0 auto 16px;display:grid;place-items:center;
+    background:var(--accent-soft);border-radius:12px;color:var(--accent);
+  }
+  .drop .zip svg{width:26px;height:26px}
+  .drop h2{margin:0 0 6px;font-size:20px;font-weight:600}
+  .drop p{margin:0;color:var(--mute);font-size:14.5px}
+  .drop .fname{margin-top:14px;font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--ink)}
+  input[type=file]{display:none}
+
+  .btn{
+    appearance:none;border:none;cursor:pointer;font:inherit;
+    background:var(--ink);color:var(--paper);font-size:16px;font-weight:600;
+    padding:14px 30px;border-radius:10px;margin-top:22px;
+    transition:transform .12s,opacity .2s;letter-spacing:.01em;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn:disabled{opacity:.4;cursor:default;transform:none}
+  .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent);padding:9px 18px;font-size:14px;margin:0}
+
+  .err{
+    margin-top:18px;padding:13px 16px;border-radius:10px;
+    background:#fbe7e2;border:1px solid #f0c4b6;color:#9a3412;font-size:14.5px;
+  }
+
+  /* results */
+  .results{margin-top:14px;display:none}
+  .results.show{display:block}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:8px 0 30px}
+  .stat{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:18px 16px;box-shadow:var(--shadow);
+  }
+  .stat .n{font-size:34px;font-weight:600;line-height:1;letter-spacing:-.02em}
+  .stat .l{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--mute);margin-top:8px}
+  .stat.flag .n{color:var(--accent)}
+
+  .panelhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 6px}
+  .panelhead h3{font-size:22px;margin:0;font-weight:600}
+  .panelhead .sub{color:var(--mute);font-size:14px}
+
+  .search{
+    width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+    background:var(--card);font:inherit;font-size:15px;margin:14px 0 4px;color:var(--ink);
+  }
+  .search:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+
+  ul.list{list-style:none;margin:14px 0 0;padding:0;border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+  ul.list li{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:13px 16px;border-bottom:1px solid var(--paper-2)}
+  ul.list li:last-child{border-bottom:none}
+  ul.list li .u{font-weight:600;font-size:15.5px}
+  ul.list li a{color:var(--accent);text-decoration:none;font-family:ui-monospace,Menlo,monospace;
+    font-size:12.5px;letter-spacing:.04em;border:1px solid var(--accent-soft);padding:5px 11px;border-radius:8px}
+  ul.list li a:hover{background:var(--accent-soft)}
+  .empty{padding:26px 16px;text-align:center;color:var(--mute);font-size:14.5px}
+
+  .tabs{display:flex;gap:6px;margin:30px 0 0;flex-wrap:wrap}
+  .tab{appearance:none;border:1px solid var(--line);background:var(--card);font:inherit;
+    cursor:pointer;padding:9px 15px;border-radius:999px;font-size:14px;color:var(--mute);transition:.15s}
+  .tab[aria-selected=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .tab .c{font-family:ui-monospace,Menlo,monospace;font-size:12px;opacity:.7;margin-left:6px}
+
+  .toolbar{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+  details.faq{border-top:1px solid var(--line);padding:18px 0}
+  details.faq summary{cursor:pointer;font-weight:600;font-size:16px;list-style:none}
+  details.faq summary::-webkit-details-marker{display:none}
+  details.faq summary::before{content:"+";color:var(--accent);font-weight:700;margin-right:12px}
+  details.faq[open] summary::before{content:"–"}
+  details.faq .body{padding:14px 0 4px 26px;color:var(--mute);font-size:15px}
+  details.faq ol{margin:8px 0;padding-left:18px}
+  details.faq li{margin:5px 0}
+  .faqwrap{margin-top:60px}
+  .faqwrap h3{font-size:14px;font-family:ui-monospace,Menlo,monospace;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--mute);margin:0 0 8px}
+
+  .foot{margin-top:50px;color:var(--mute);font-size:13px;text-align:center}
+  @media (max-width:520px){
+    .stats{grid-template-columns:1fr 1fr}
+    .stat:first-child{grid-column:1/-1}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Instagram · follower audit</p>
+  <h1>See who <em>doesn't follow</em> you back.</h1>
+  <p class="lede">Drop in the data ZIP that Instagram emails you. We read it right here in your browser to find the accounts you follow that don't follow you in return.</p>
+  <div class="privacy">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    No login, no password — nothing leaves this page.
+  </div>
+
+  <div id="drop" class="drop" tabindex="0" role="button" aria-label="Upload your Instagram data ZIP file">
+    <div class="zip">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8v13H3V3h13"/><path d="M14 3h7v7"/><path d="M9 7h2M9 11h2M9 15h2"/></svg>
+    </div>
+    <h2>Drop your ZIP file here</h2>
+    <p>or click to choose it — the one named like <code>instagram-…​.zip</code></p>
+    <div class="fname" id="fname"></div>
+    <input type="file" id="file" accept=".zip,application/zip">
+  </div>
+
+  <div style="text-align:center">
+    <button class="btn" id="analyze" disabled>Analyze</button>
+  </div>
+
+  <div id="err"></div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+    <div class="stats" id="stats"></div>
+
+    <div class="tabs" id="tabs" role="tablist">
+      <button class="tab" role="tab" data-tab="nonfollowers" aria-selected="true">Don't follow back <span class="c" id="c-non"></span></button>
+      <button class="tab" role="tab" data-tab="fans" aria-selected="false">You don't follow back <span class="c" id="c-fans"></span></button>
+      <button class="tab" role="tab" data-tab="mutual" aria-selected="false">Mutuals <span class="c" id="c-mut"></span></button>
+    </div>
+
+    <input class="search" id="search" placeholder="Filter usernames…" autocomplete="off">
+    <ul class="list" id="list"></ul>
+
+    <div class="toolbar">
+      <button class="btn ghost" id="copy">Copy usernames</button>
+      <button class="btn ghost" id="csv">Download CSV</button>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faqwrap">
+    <h3>How to get the file</h3>
+    <details class="faq" open>
+      <summary>How do I download my Instagram data?</summary>
+      <div class="body">
+        Request the ZIP with your followers/following <code>.json</code> files:
+        <ol>
+          <li>Tap the ☰ menu in the top right of Instagram</li>
+          <li>Accounts Center → Your information and permissions</li>
+          <li>Export your information → Create export</li>
+          <li>Export to device → Customize information</li>
+          <li>Check only <strong>Followers and Following</strong></li>
+          <li>Set Date Range to <strong>All time</strong></li>
+          <li>Format → <strong>JSON</strong> → Start export</li>
+        </ol>
+        Instagram emails the ZIP when it's ready (minutes to ~48 hours). Upload it here as-is — no need to unzip.
+      </div>
+    </details>
+    <details class="faq">
+      <summary>Do I need to give you my IG login?</summary>
+      <div class="body">No. The only thing you provide is the ZIP file, which contains who you follow and who follows you. All reading and comparing happens locally in your browser — the data never touches a server.</div>
+    </details>
+    <details class="faq">
+      <summary>It says my file is missing the lists.</summary>
+      <div class="body">Make sure you chose <strong>JSON</strong> (not HTML) and checked <strong>Followers and Following</strong> when exporting. The needed files live in <code>connections/followers_and_following/</code> as <code>followers_1.json</code> (sometimes split into _2, _3…) and <code>following.json</code>. If you exported HTML, request a new JSON export.</div>
+    </details>
+  </div>
+
+  <p class="foot">Runs entirely in your browser using JSZip. Nothing is uploaded.</p>
+</div>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s);
+  const drop=$("#drop"), fileInput=$("#file"), fname=$("#fname"),
+        analyzeBtn=$("#analyze"), errBox=$("#err"), results=$("#results"),
+        statsEl=$("#stats"), listEl=$("#list"), searchEl=$("#search");
+  let pickedFile=null, data=null, activeTab="nonfollowers";
+
+  function showErr(msg){ errBox.innerHTML = msg ? `<div class="err">${msg}</div>` : ""; }
+
+  /* ---- file picking ---- */
+  drop.addEventListener("click",()=>fileInput.click());
+  drop.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){e.preventDefault();fileInput.click();} });
+  fileInput.addEventListener("change",()=>{ if(fileInput.files[0]) setFile(fileInput.files[0]); });
+  ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag");}));
+  ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag");}));
+  drop.addEventListener("drop",e=>{ const f=e.dataTransfer.files[0]; if(f) setFile(f); });
+
+  function setFile(f){
+    if(!/\.zip$/i.test(f.name)){ showErr("That's not a ZIP file. Upload the ZIP Instagram emailed you (don't unzip it first)."); return; }
+    pickedFile=f; fname.textContent="📦 "+f.name; analyzeBtn.disabled=false; showErr("");
+    results.classList.remove("show");
+  }
+
+  /* ---- parsing helpers ---- */
+  // Each entry: { string_list_data:[{value,href,timestamp}] }
+  function extract(node){
+    const out=new Map();
+    const add=arr=>{ if(!Array.isArray(arr))return;
+      for(const item of arr){
+        const sld = item && item.string_list_data;
+        if(Array.isArray(sld)&&sld.length){
+          const v=sld[0];
+          if(v && v.value) out.set(v.value.toLowerCase(),{value:v.value,href:v.href||("https://www.instagram.com/"+v.value)});
+        }
+      }
+    };
+    if(Array.isArray(node)) add(node);
+    else if(node&&typeof node==="object"){
+      // common keys, else first array value found
+      const keyed = node.relationships_followers||node.relationships_following;
+      if(keyed) add(keyed);
+      else for(const k in node){ if(Array.isArray(node[k])) add(node[k]); }
+    }
+    return out;
+  }
+
+  async function analyze(){
+    showErr(""); analyzeBtn.disabled=true; analyzeBtn.textContent="Reading…";
+    try{
+      const zip = await JSZip.loadAsync(pickedFile);
+      const followers=new Map(), following=new Map();
+      let foundFollowing=false, foundFollowers=false;
+
+      const entries=Object.values(zip.files).filter(f=>!f.dir && /\.json$/i.test(f.name));
+      for(const f of entries){
+        const base=f.name.split("/").pop().toLowerCase();
+        const isFollower = /^followers(_\d+)?\.json$/.test(base);
+        const isFollowing = /^following(_\d+)?\.json$/.test(base);
+        if(!isFollower && !isFollowing) continue;
+        let json;
+        try{ json=JSON.parse(await f.async("string")); }catch{ continue; }
+        const m=extract(json);
+        if(isFollower){ foundFollowers=true; m.forEach((v,k)=>followers.set(k,v)); }
+        else { foundFollowing=true; m.forEach((v,k)=>following.set(k,v)); }
+      }
+
+      if(!foundFollowers && !foundFollowing){
+        throw new Error("Couldn't find followers/following lists in this ZIP. Make sure you exported in <strong>JSON</strong> format and selected <strong>Followers and Following</strong>.");
+      }
+      if(!foundFollowing) throw new Error("Found your followers but not your following list (<code>following.json</code>). Re-export with <strong>Followers and Following</strong> both checked.");
+      if(!foundFollowers) throw new Error("Found your following list but not your followers (<code>followers_1.json</code>). Re-export with <strong>Followers and Following</strong> both checked.");
+
+      const nonfollowers=[], mutual=[], fans=[];
+      following.forEach((v,k)=>{ (followers.has(k)?mutual:nonfollowers).push(v); });
+      followers.forEach((v,k)=>{ if(!following.has(k)) fans.push(v); });
+      const byName=(a,b)=>a.value.toLowerCase().localeCompare(b.value.toLowerCase());
+      nonfollowers.sort(byName); mutual.sort(byName); fans.sort(byName);
+
+      data={
+        followersCount:followers.size, followingCount:following.size,
+        nonfollowers, mutual, fans
+      };
+      render();
+    }catch(e){
+      showErr(e.message||"Something went wrong reading that ZIP.");
+    }finally{
+      analyzeBtn.disabled=false; analyzeBtn.textContent="Analyze";
+    }
+  }
+  analyzeBtn.addEventListener("click",analyze);
+
+  /* ---- rendering ---- */
+  function render(){
+    statsEl.innerHTML=`
+      <div class="stat flag"><div class="n">${data.nonfollowers.length}</div><div class="l">Don't follow back</div></div>
+      <div class="stat"><div class="n">${data.followersCount}</div><div class="l">Followers</div></div>
+      <div class="stat"><div class="n">${data.followingCount}</div><div class="l">Following</div></div>`;
+    $("#c-non").textContent=data.nonfollowers.length;
+    $("#c-fans").textContent=data.fans.length;
+    $("#c-mut").textContent=data.mutual.length;
+    results.classList.add("show");
+    searchEl.value="";
+    renderList();
+    results.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+
+  function currentRows(){
+    const key = activeTab==="nonfollowers"?"nonfollowers":activeTab==="fans"?"fans":"mutual";
+    const q=searchEl.value.trim().toLowerCase();
+    return data[key].filter(r=>!q||r.value.toLowerCase().includes(q));
+  }
+
+  function renderList(){
+    const rows=currentRows();
+    if(!rows.length){
+      const msg = data[activeTab==="nonfollowers"?"nonfollowers":activeTab==="fans"?"fans":"mutual"].length
+        ? "No matches." 
+        : (activeTab==="nonfollowers"?"Everyone you follow follows you back. 🎉"
+          :activeTab==="fans"?"You follow back everyone who follows you."
+          :"No mutual follows found.");
+      listEl.innerHTML=`<li class="empty" style="justify-content:center">${msg}</li>`;
+      return;
+    }
+    listEl.innerHTML=rows.map(r=>`
+      <li><span class="u">@${escapeHtml(r.value)}</span>
+      <a href="${escapeAttr(r.href)}" target="_blank" rel="noopener noreferrer">Open ↗</a></li>`).join("");
+  }
+
+  document.querySelectorAll(".tab").forEach(t=>{
+    t.addEventListener("click",()=>{
+      document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected","false"));
+      t.setAttribute("aria-selected","true");
+      activeTab=t.dataset.tab; renderList();
+    });
+  });
+  searchEl.addEventListener("input",renderList);
+
+  $("#copy").addEventListener("click",()=>{
+    const txt=currentRows().map(r=>"@"+r.value).join("\n");
+    navigator.clipboard.writeText(txt).then(()=>{
+      const b=$("#copy"); const o=b.textContent; b.textContent="Copied ✓"; setTimeout(()=>b.textContent=o,1400);
+    });
+  });
+  $("#csv").addEventListener("click",()=>{
+    const rows=currentRows();
+    const csv="username,profile_url\n"+rows.map(r=>`${r.value},${r.href}`).join("\n");
+    const blob=new Blob([csv],{type:"text/csv"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download=`instagram-${activeTab}.csv`; a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  function escapeHtml(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+  function escapeAttr(s){return String(s).replace(/"/g,"&quot;");}
+})();
+</script>
+</body>
+</html>
