@@ -3,262 +3,225 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unfollow Lens — δες ποιος δεν σε ακολουθεί πίσω</title>
+<title>Unfollowers.gr — δες ποιος δεν σε ακολουθεί πίσω</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   :root{
-    --ink:#16140f;--ink-soft:#46412f;--paper:#faf6ec;--paper-2:#f2ecdd;
-    --line:#e2d9c4;--line-2:#cdc1a6;--accent:#b8460f;--accent-2:#e07a3e;
-    --accent-soft:#f6e0cf;--gold:#a9851f;--mute:#857c6a;--ok:#4d6a1e;
-    --ok-soft:#eef1df;--card:#fffdf7;--rose:#9a2d2d;
-    --shadow-xs:0 1px 2px rgba(22,20,15,.05);
-    --shadow-sm:0 1px 0 rgba(22,20,15,.03),0 8px 20px -14px rgba(22,20,15,.45);
-    --shadow:0 1px 0 rgba(22,20,15,.04),0 28px 56px -30px rgba(22,20,15,.55);
-    --shadow-lg:0 2px 0 rgba(22,20,15,.04),0 44px 80px -34px rgba(22,20,15,.6);
-    --glow:0 0 0 1px rgba(184,70,15,.08),0 18px 50px -22px rgba(224,122,62,.55);
+    --bg:#faf7ff;
+    --ink:#1a1130;--ink-soft:#4a3d68;--mute:#8479a0;
+    --card:#ffffff;--card-2:#f6f1ff;
+    --line:#e9ddf;--line-2:#d9c4f0;
+    --violet:#7c2dff;--violet-2:#9d4eff;
+    --magenta:#e0219c;--magenta-2:#ff4fc3;
+    --cyan:#18c8e6;
+    --soft:#f3e6ff;--soft-2:#ffe3f6;
+    --ok:#1f9e5a;--ok-soft:#e3f8ec;--rose:#d61f6a;--gold:#c98a16;
+    --grad:linear-gradient(135deg,var(--violet),var(--magenta));
+    --grad-bright:linear-gradient(135deg,var(--violet-2),var(--magenta-2));
+    --shadow-xs:0 1px 3px rgba(124,45,255,.10);
+    --shadow-sm:0 2px 6px rgba(124,45,255,.08),0 12px 28px -16px rgba(124,45,255,.4);
+    --shadow:0 4px 12px rgba(124,45,255,.12),0 30px 60px -28px rgba(124,45,255,.55);
+    --shadow-lg:0 8px 22px rgba(124,45,255,.16),0 48px 90px -34px rgba(224,33,156,.55);
+    --glow-v:0 0 0 1px rgba(124,45,255,.12),0 18px 44px -16px rgba(124,45,255,.7);
+    --glow-m:0 0 0 1px rgba(224,33,156,.14),0 18px 50px -16px rgba(224,33,156,.65);
   }
   *{box-sizing:border-box}html,body{margin:0;padding:0}
   body{
     background:
-      radial-gradient(1300px 600px at 8% -10%,rgba(224,122,62,.13),transparent 60%),
-      radial-gradient(1000px 520px at 108% 4%,rgba(169,133,31,.12),transparent 55%),
-      radial-gradient(900px 700px at 50% 120%,rgba(184,70,15,.06),transparent 60%),
-      var(--paper);
-    background-attachment:fixed;
-    color:var(--ink);font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
-    line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
-    overflow-x:hidden;
+      radial-gradient(1300px 620px at 6% -12%,rgba(124,45,255,.16),transparent 58%),
+      radial-gradient(1100px 560px at 110% 2%,rgba(224,33,156,.16),transparent 55%),
+      radial-gradient(900px 760px at 50% 122%,rgba(24,200,230,.10),transparent 60%),
+      var(--bg);
+    background-attachment:fixed;color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;
   }
   .wrap{max-width:800px;margin:0 auto;padding:30px 24px 120px;position:relative}
 
-  /* ---------- top bar ---------- */
-  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:42px}
-  .brand{display:flex;align-items:center;gap:11px}
-  .brand .mark{width:38px;height:38px;flex:0 0 auto;filter:drop-shadow(0 6px 14px rgba(184,70,15,.3))}
-  .brand .name{font-weight:600;font-size:18px;letter-spacing:.01em}
-  .brand .name span{color:var(--accent)}
-  .langtoggle{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);
-    border-radius:999px;padding:4px;box-shadow:var(--shadow-xs)}
-  .langbtn{appearance:none;border:none;background:none;cursor:pointer;font:inherit;font-size:14px;
-    font-weight:600;color:var(--mute);padding:6px 13px;border-radius:999px;display:flex;align-items:center;
-    gap:7px;transition:.18s;line-height:1}
-  .langbtn .flag{width:20px;height:14px;border-radius:2px;overflow:hidden;display:block;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
-  .langbtn[aria-pressed=true]{background:var(--ink);color:var(--paper);box-shadow:var(--shadow-xs)}
-  .langbtn:not([aria-pressed=true]):hover{color:var(--ink)}
+  /* top bar */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:38px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .mark{width:44px;height:44px;flex:0 0 auto;filter:drop-shadow(0 8px 18px rgba(124,45,255,.45))}
+  .brand .name{font-weight:700;font-size:19px;letter-spacing:-.01em;line-height:1}
+  .brand .name b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .brand .name .tld{color:var(--mute);font-weight:600}
+  .trustchip{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,Menlo,monospace;
+    font-size:11.5px;font-weight:600;color:var(--violet);background:var(--soft);border:1px solid var(--line-2);
+    padding:7px 13px;border-radius:999px;box-shadow:var(--shadow-xs)}
+  .trustchip svg{width:14px;height:14px}
 
-  /* ---------- hero ---------- */
+  /* hero */
   .eyebrow{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11.5px;letter-spacing:.26em;
-    text-transform:uppercase;color:var(--accent);margin:0 0 16px;font-weight:600}
+    text-transform:uppercase;font-weight:700;margin:0 0 16px;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
   h1{font-size:clamp(38px,7.6vw,64px);line-height:1.0;margin:0 0 20px;font-weight:600;letter-spacing:-.018em}
-  h1 em{font-style:italic;color:var(--accent);position:relative;white-space:nowrap}
-  h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.06em;height:.12em;
-    background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:2px;opacity:.35;
-    transform:scaleX(0);transform-origin:left;animation:underline 1s .4s ease forwards}
+  h1 em{font-style:italic;position:relative;white-space:nowrap;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.02em;height:.11em;background:var(--grad);
+    border-radius:3px;opacity:.4;transform:scaleX(0);transform-origin:left;animation:underline 1s .4s cubic-bezier(.2,.8,.2,1) forwards}
   @keyframes underline{to{transform:scaleX(1)}}
-  .lede{font-size:18.5px;color:var(--ink-soft);max-width:56ch;margin:0 0 28px}
-  .privacy{display:inline-flex;align-items:center;gap:9px;font-family:ui-monospace,Menlo,monospace;
-    font-size:12.5px;color:var(--ok);background:var(--ok-soft);border:1px solid #d3dcb0;padding:9px 15px;
-    border-radius:999px;box-shadow:var(--shadow-xs)}
-  .privacy svg{width:14px;height:14px}
+  .lede{font-size:18.5px;color:var(--ink-soft);max-width:56ch;margin:0 0 26px}
 
-  /* ---------- step rail ---------- */
-  .steps{display:flex;gap:0;margin:48px 0 28px}
+  /* trust badges row */
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+  .badge2{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:var(--ink-soft);
+    background:var(--card);border:1px solid var(--line-2);padding:10px 15px;border-radius:14px;box-shadow:var(--shadow-sm)}
+  .badge2 .bi{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#fff;flex:0 0 auto}
+  .badge2 .bi.v{background:var(--grad)}.badge2 .bi.g{background:linear-gradient(135deg,var(--ok),#3fcf7f)}
+  .badge2 .bi.c{background:linear-gradient(135deg,var(--cyan),#5fe0f5)}
+  .badge2 .bi svg{width:15px;height:15px}
+
+  /* steps */
+  .steps{display:flex;margin:46px 0 28px}
   .steprail{flex:1;position:relative}
-  .steptab{display:flex;align-items:center;gap:11px;width:100%;background:none;border:none;font:inherit;
-    cursor:pointer;padding:0;color:var(--mute);text-align:left}
-  .steptab .dot{width:34px;height:34px;flex:0 0 auto;border-radius:50%;border:1.5px solid var(--line-2);
-    display:grid;place-items:center;font-family:ui-monospace,Menlo,monospace;font-size:14px;
-    background:var(--card);color:var(--mute);transition:.3s cubic-bezier(.3,1.4,.5,1);font-weight:600;
-    box-shadow:var(--shadow-xs)}
+  .steptab{display:flex;align-items:center;gap:11px;width:100%;background:none;border:none;font:inherit;cursor:pointer;padding:0;color:var(--mute);text-align:left}
+  .steptab .dot{width:36px;height:36px;flex:0 0 auto;border-radius:50%;border:2px solid var(--line-2);
+    display:grid;place-items:center;font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);
+    color:var(--mute);transition:.3s cubic-bezier(.3,1.4,.5,1);font-weight:700;box-shadow:var(--shadow-xs)}
   .steptab .lab{font-size:14.5px;font-weight:600;transition:.2s}
-  .steptab[aria-current=true] .dot{background:var(--accent);border-color:var(--accent);color:#fff;
-    transform:scale(1.12);box-shadow:0 8px 18px -6px rgba(184,70,15,.6)}
+  .steptab[aria-current=true] .dot{background:var(--grad);border-color:transparent;color:#fff;transform:scale(1.14);box-shadow:var(--glow-v)}
   .steptab[aria-current=true] .lab{color:var(--ink)}
-  .steptab[data-done=true] .dot{background:var(--ok);border-color:var(--ok);color:#fff}
-  .stepline{position:absolute;top:17px;left:34px;right:6px;height:2px;background:var(--line-2);overflow:hidden}
-  .stepline::after{content:"";position:absolute;inset:0;background:var(--ok);transform:scaleX(0);
-    transform-origin:left;transition:transform .5s ease}
+  .steptab[data-done=true] .dot{background:linear-gradient(135deg,var(--ok),#3fcf7f);border-color:transparent;color:#fff}
+  .stepline{position:absolute;top:18px;left:36px;right:6px;height:2px;background:var(--line-2);overflow:hidden;border-radius:2px}
+  .stepline::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ok),#3fcf7f);transform:scaleX(0);transform-origin:left;transition:transform .5s ease}
   .steprail[data-filled=true] .stepline::after{transform:scaleX(1)}
   .steprail:last-child .stepline{display:none}
-  @media(max-width:560px){.steptab .lab{display:none}.steprail{flex:0 0 auto;margin-right:34px}.stepline{right:-34px}}
+  @media(max-width:560px){.steptab .lab{display:none}.steprail{flex:0 0 auto;margin-right:36px}.stepline{right:-36px}}
 
-  .panel{display:none}
-  .panel.active{display:block;animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
+  .panel{display:none}.panel.active{display:block;animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
-  /* ---------- guided card ---------- */
-  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);
-    overflow:hidden;position:relative}
-  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;
-    background:linear-gradient(90deg,var(--accent),var(--accent-2),var(--gold))}
+  .card{background:var(--card);border:1px solid var(--line-2);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-bright)}
   .guide-head{padding:28px 28px 6px}
   .guide-head h2{margin:0 0 7px;font-size:24px;font-weight:600;letter-spacing:-.01em}
   .guide-head p{margin:0 0 4px;color:var(--mute);font-size:15px}
   .ol{list-style:none;margin:16px 0 0;padding:0;counter-reset:g}
-  .ol li{counter-increment:g;display:flex;gap:15px;padding:15px 28px;border-top:1px solid var(--paper-2);
-    transition:background .2s}
-  .ol li:hover{background:#fffaf2}
-  .ol li::before{content:counter(g);flex:0 0 auto;width:28px;height:28px;border-radius:50%;
-    background:var(--accent-soft);color:var(--accent);font-family:ui-monospace,Menlo,monospace;font-size:13px;
-    font-weight:600;display:grid;place-items:center;margin-top:1px;box-shadow:var(--shadow-xs)}
+  .ol li{counter-increment:g;display:flex;gap:15px;padding:15px 28px;border-top:1px solid var(--card-2);transition:background .2s}
+  .ol li:hover{background:var(--card-2)}
+  .ol li::before{content:counter(g);flex:0 0 auto;width:29px;height:29px;border-radius:50%;background:var(--grad);
+    color:#fff;font-family:ui-monospace,Menlo,monospace;font-size:13px;font-weight:700;display:grid;place-items:center;
+    margin-top:1px;box-shadow:0 4px 10px -3px rgba(124,45,255,.5)}
   .ol li .t{font-size:15.5px}.ol li .t b{font-weight:600}
-  .pill{display:inline-block;background:var(--paper-2);border:1px solid var(--line);border-radius:7px;
-    padding:1px 8px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--ink-soft)}
-  .guide-cta{display:flex;flex-wrap:wrap;gap:12px;padding:24px 28px 28px;border-top:1px solid var(--paper-2);align-items:center}
+  .pill{display:inline-block;background:var(--soft);border:1px solid var(--line-2);border-radius:8px;padding:1px 8px;
+    font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--violet);font-weight:600}
+  .guide-cta{display:flex;flex-wrap:wrap;gap:12px;padding:24px 28px 28px;border-top:1px solid var(--card-2);align-items:center}
   .hint{font-size:13.5px;color:var(--mute);flex:1;min-width:180px}
 
-  .btn{appearance:none;border:none;cursor:pointer;font:inherit;background:var(--ink);color:var(--paper);
-    font-size:15.5px;font-weight:600;padding:14px 28px;border-radius:13px;
-    transition:transform .14s cubic-bezier(.3,1.4,.5,1),box-shadow .2s,filter .2s;
-    display:inline-flex;align-items:center;gap:9px;box-shadow:0 10px 24px -12px rgba(22,20,15,.65);position:relative;overflow:hidden}
-  .btn::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.18) 50%,transparent 70%);
-    transform:translateX(-120%);transition:transform .6s}
-  .btn:hover{transform:translateY(-2px)}
-  .btn:hover::after{transform:translateX(120%)}
-  .btn:active{transform:translateY(0)}
-  .btn:disabled{opacity:.36;cursor:default;transform:none;box-shadow:none}
-  .btn:disabled::after{display:none}
-  .btn svg{width:16px;height:16px;position:relative;z-index:1}
-  .btn .lbl{position:relative;z-index:1}
-  .btn.accent{background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:var(--glow)}
-  .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent);box-shadow:none}
-  .btn.ghost:hover{background:var(--accent-soft)}
+  .btn{appearance:none;border:none;cursor:pointer;font:inherit;background:var(--ink);color:#fff;font-size:15.5px;font-weight:600;
+    padding:14px 28px;border-radius:14px;transition:transform .14s cubic-bezier(.3,1.4,.5,1),box-shadow .2s,filter .2s;
+    display:inline-flex;align-items:center;gap:9px;box-shadow:0 10px 26px -10px rgba(26,17,48,.55);position:relative;overflow:hidden}
+  .btn::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);transform:translateX(-120%);transition:transform .6s}
+  .btn:hover{transform:translateY(-2px)}.btn:hover::after{transform:translateX(120%)}.btn:active{transform:translateY(0)}
+  .btn:disabled{opacity:.4;cursor:default;transform:none;box-shadow:none}.btn:disabled::after{display:none}
+  .btn svg{width:16px;height:16px;position:relative;z-index:1}.btn .lbl{position:relative;z-index:1}
+  .btn.accent{background:var(--grad);box-shadow:var(--glow-v)}
+  .btn.accent:hover{box-shadow:var(--glow-m)}
+  .btn.ghost{background:transparent;color:var(--violet);border:1.5px solid var(--line);box-shadow:none}
+  .btn.ghost:hover{background:var(--soft)}
   .btn.sm{font-size:14px;padding:10px 18px}
+  .btn.pay{background:linear-gradient(135deg,var(--violet),var(--magenta),var(--magenta-2));box-shadow:var(--glow-m)}
   .nextrow{margin-top:22px;display:flex;justify-content:flex-end}
 
-  /* ---------- dropzone ---------- */
-  .drop{position:relative;border:2px dashed var(--line-2);border-radius:20px;background:var(--card);
-    padding:50px 28px;text-align:center;transition:.25s cubic-bezier(.2,.8,.2,1);cursor:pointer;box-shadow:var(--shadow-sm)}
-  .drop:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
-  .drop.drag{border-color:var(--accent);background:#fffaf2;transform:translateY(-4px) scale(1.01);box-shadow:var(--shadow-lg)}
-  .drop .zip{width:64px;height:64px;margin:0 auto 18px;display:grid;place-items:center;
-    background:linear-gradient(135deg,var(--accent-soft),#fbeede);border-radius:18px;color:var(--accent);
-    box-shadow:0 12px 26px -10px rgba(184,70,15,.4);transition:.3s}
-  .drop:hover .zip{transform:translateY(-2px) rotate(-3deg)}
-  .drop.drag .zip{transform:scale(1.1) rotate(4deg)}
-  .drop .zip svg{width:30px;height:30px}
+  .drop{position:relative;border:2px dashed var(--line);border-radius:22px;background:var(--card);padding:50px 28px;text-align:center;
+    transition:.25s cubic-bezier(.2,.8,.2,1);cursor:pointer;box-shadow:var(--shadow-sm)}
+  .drop:hover{border-color:var(--violet);transform:translateY(-2px);box-shadow:var(--shadow)}
+  .drop.drag{border-color:var(--magenta);background:var(--card-2);transform:translateY(-4px) scale(1.01);box-shadow:var(--shadow-lg)}
+  .drop .zip{width:66px;height:66px;margin:0 auto 18px;display:grid;place-items:center;background:var(--grad);border-radius:20px;color:#fff;
+    box-shadow:0 14px 30px -8px rgba(124,45,255,.6);transition:.3s}
+  .drop:hover .zip{transform:translateY(-2px) rotate(-4deg)}.drop.drag .zip{transform:scale(1.1) rotate(5deg)}
+  .drop .zip svg{width:32px;height:32px}
   .drop h2{margin:0 0 7px;font-size:22px;font-weight:600}
   .drop p{margin:0;color:var(--mute);font-size:14.5px}
-  .drop code{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:var(--paper-2);padding:1px 6px;border-radius:5px}
-  .drop .fname{margin-top:16px;font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--ink);
-    display:inline-flex;align-items:center;gap:7px;background:var(--ok-soft);border:1px solid #d3dcb0;
-    padding:7px 13px;border-radius:10px;animation:pop .3s cubic-bezier(.3,1.4,.5,1) both}
+  .drop code{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:var(--soft);padding:1px 6px;border-radius:5px;color:var(--violet)}
+  .drop .fname{margin-top:16px;font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--ink);display:inline-flex;align-items:center;gap:7px;
+    background:var(--ok-soft);border:1px solid #b7ecca;padding:8px 14px;border-radius:12px;animation:pop .3s cubic-bezier(.3,1.4,.5,1) both;box-shadow:var(--shadow-xs)}
   @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
   input[type=file]{display:none}
   .analyzerow{text-align:center;margin-top:24px}
-  .err{margin-top:20px;padding:16px 18px;border-radius:14px;background:#fbe5de;border:1px solid #f0c2b1;
-    color:#8c2f10;font-size:14.5px;box-shadow:var(--shadow-sm);animation:rise .35s ease both}
+  .paynote{margin-top:14px;font-size:13px;color:var(--mute)}
+  .err{margin-top:20px;padding:16px 18px;border-radius:16px;background:#ffe3ef;border:1px solid #f7b6d2;color:#a01453;font-size:14.5px;box-shadow:var(--shadow-sm);animation:rise .35s ease both}
 
-  /* ---------- results ---------- */
   .results{display:none;margin-top:6px}.results.show{display:block;animation:rise .5s ease both}
   .stats{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:14px;margin:6px 0 16px}
-  .stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 20px;
-    box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s}
-  .stat:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
-  .stat .n{font-size:40px;font-weight:600;line-height:1;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+  .stat{background:var(--card);border:1px solid var(--line-2);border-radius:20px;padding:22px 20px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s}
+  .stat:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .stat .n{font-size:42px;font-weight:600;line-height:1;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
   .stat .l{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-top:10px}
-  .stat.flag{background:linear-gradient(160deg,#fff5ec,#fffdf7);border-color:var(--accent-soft)}
-  .stat.flag::after{content:"";position:absolute;top:-30px;right:-30px;width:90px;height:90px;border-radius:50%;
-    background:radial-gradient(circle,rgba(224,122,62,.18),transparent 70%)}
-  .stat.flag .n{color:var(--accent)}
+  .stat.flag{background:linear-gradient(160deg,#fbeeff,#fff);border-color:var(--line)}
+  .stat.flag::after{content:"";position:absolute;top:-34px;right:-34px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(224,33,156,.22),transparent 70%)}
+  .stat.flag .n{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 
-  /* delta banner */
-  .delta{display:none;margin:0 0 22px;border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .delta{display:none;margin:0 0 22px;border-radius:20px;overflow:hidden;border:1px solid var(--line-2);box-shadow:var(--shadow)}
   .delta.show{display:block;animation:rise .5s ease both}
-  .delta .dhead{display:flex;align-items:center;gap:10px;padding:15px 20px;
-    background:linear-gradient(135deg,#2a2620,#3a3327);color:var(--paper)}
-  .delta .dhead svg{width:18px;height:18px;color:var(--accent-2)}
+  .delta .dhead{display:flex;align-items:center;gap:10px;padding:15px 20px;background:linear-gradient(135deg,#2a1758,#4a1d6e);color:#fff}
+  .delta .dhead svg{width:18px;height:18px;color:var(--magenta-2)}
   .delta .dhead b{font-weight:600;font-size:15px}
-  .delta .dhead .when{margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;opacity:.7}
+  .delta .dhead .when{margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;opacity:.75}
   .delta .dbody{display:grid;grid-template-columns:1fr 1fr;background:var(--card)}
-  .delta .dcell{padding:18px 20px}
-  .delta .dcell:first-child{border-right:1px solid var(--paper-2)}
+  .delta .dcell{padding:18px 20px}.delta .dcell:first-child{border-right:1px solid var(--card-2)}
   .delta .dcell .dn{font-size:28px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
   .delta .dcell .dl{font-size:13px;color:var(--mute);margin-top:5px}
   .delta .dcell.lost .dn{color:var(--rose)}.delta .dcell.gain .dn{color:var(--ok)}
   .delta .dnames{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--ink-soft);margin-top:9px;line-height:1.8;word-break:break-word}
-  .delta .dnames a{color:var(--accent);text-decoration:none}.delta .dnames a:hover{text-decoration:underline}
+  .delta .dnames a{color:var(--violet);text-decoration:none}.delta .dnames a:hover{text-decoration:underline}
 
-  /* deleted/banned note */
-  .note{display:flex;gap:12px;margin:0 0 22px;padding:15px 18px;border-radius:16px;
-    background:linear-gradient(160deg,#fdf6e9,#fffdf7);border:1px solid var(--line);box-shadow:var(--shadow-sm)}
-  .note .ic{flex:0 0 auto;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
-    background:#f6ecd2;color:var(--gold)}
-  .note .ic svg{width:18px;height:18px}
-  .note .tx{font-size:14px;color:var(--ink-soft);line-height:1.55}
-  .note .tx b{font-weight:600;color:var(--ink)}
+  .note{display:flex;gap:12px;margin:0 0 22px;padding:15px 18px;border-radius:18px;background:linear-gradient(160deg,#fff6e6,#fff);border:1px solid #f0dca8;box-shadow:var(--shadow-sm)}
+  .note .ic{flex:0 0 auto;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#fbeccb;color:var(--gold)}
+  .note .ic svg{width:19px;height:19px}
+  .note .tx{font-size:14px;color:var(--ink-soft);line-height:1.55}.note .tx b{font-weight:600;color:var(--ink)}
 
   .tabs{display:flex;gap:8px;margin:8px 0 0;flex-wrap:wrap}
-  .tab{appearance:none;border:1px solid var(--line);background:var(--card);font:inherit;cursor:pointer;
-    padding:10px 17px;border-radius:999px;font-size:14px;color:var(--mute);transition:.18s;box-shadow:var(--shadow-xs)}
-  .tab:hover{border-color:var(--line-2);transform:translateY(-1px)}
-  .tab[aria-selected=true]{background:var(--ink);color:var(--paper);border-color:var(--ink);box-shadow:var(--shadow-sm)}
-  .tab .c{font-family:ui-monospace,Menlo,monospace;font-size:12px;opacity:.7;margin-left:6px}
+  .tab{appearance:none;border:1px solid var(--line-2);background:var(--card);font:inherit;cursor:pointer;padding:10px 17px;border-radius:999px;font-size:14px;color:var(--mute);transition:.18s;box-shadow:var(--shadow-xs)}
+  .tab:hover{border-color:var(--line);transform:translateY(-1px)}
+  .tab[aria-selected=true]{background:var(--grad);color:#fff;border-color:transparent;box-shadow:var(--shadow-sm)}
+  .tab .c{font-family:ui-monospace,Menlo,monospace;font-size:12px;opacity:.8;margin-left:6px}
 
-  .search{width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:13px;background:var(--card);
-    font:inherit;font-size:15px;margin:16px 0 0;color:var(--ink);box-shadow:var(--shadow-xs);transition:.2s}
-  .search:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(184,70,15,.12)}
+  .search{width:100%;padding:13px 16px;border:1px solid var(--line-2);border-radius:14px;background:var(--card);font:inherit;font-size:15px;margin:16px 0 0;color:var(--ink);box-shadow:var(--shadow-xs);transition:.2s}
+  .search:focus{outline:none;border-color:var(--violet);box-shadow:0 0 0 3px rgba(124,45,255,.15)}
 
-  ul.list{list-style:none;margin:14px 0 0;padding:0;border:1px solid var(--line);border-radius:18px;
-    overflow:hidden;background:var(--card);box-shadow:var(--shadow-sm);max-height:540px;overflow-y:auto}
-  ul.list li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 17px;
-    border-bottom:1px solid var(--paper-2);transition:background .15s;animation:fadeIn .3s ease both}
+  ul.list{list-style:none;margin:14px 0 0;padding:0;border:1px solid var(--line-2);border-radius:20px;overflow:hidden;background:var(--card);box-shadow:var(--shadow-sm);max-height:540px;overflow-y:auto}
+  ul.list li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 17px;border-bottom:1px solid var(--card-2);transition:background .15s;animation:fadeIn .3s ease both}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-  ul.list li:hover{background:#fffaf2}
-  ul.list li:last-child{border-bottom:none}
+  ul.list li:hover{background:var(--card-2)}ul.list li:last-child{border-bottom:none}
   ul.list li .u{font-weight:600;font-size:15.5px;display:flex;align-items:center;gap:9px;min-width:0}
   ul.list li .u .handle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  ul.list li .badge{font-family:ui-monospace,Menlo,monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
-    padding:2px 7px;border-radius:6px;font-weight:600;flex:0 0 auto}
-  ul.list li .badge.new{background:#fbe5de;color:var(--rose)}
-  ul.list li a{color:var(--accent);text-decoration:none;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
-    border:1px solid var(--accent-soft);padding:6px 12px;border-radius:9px;transition:.15s;flex:0 0 auto}
-  ul.list li a:hover{background:var(--accent-soft);transform:translateY(-1px)}
+  ul.list li .badge{font-family:ui-monospace,Menlo,monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:6px;font-weight:600;flex:0 0 auto}
+  ul.list li .badge.new{background:#ffe0ec;color:var(--rose)}
+  ul.list li a{color:var(--violet);text-decoration:none;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;border:1px solid var(--line);padding:6px 12px;border-radius:10px;transition:.15s;flex:0 0 auto}
+  ul.list li a:hover{background:var(--soft);transform:translateY(-1px)}
   .empty{padding:34px 16px;text-align:center;color:var(--mute);font-size:14.5px}
 
   .toolbar{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center}
 
-  .snapwrap{margin-top:32px;border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:var(--shadow-sm);overflow:hidden}
-  .snaphead{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--paper-2)}
-  .snaphead svg{width:18px;height:18px;color:var(--gold)}
-  .snaphead b{font-size:15px;font-weight:600}
+  .snapwrap{margin-top:32px;border:1px solid var(--line-2);border-radius:20px;background:var(--card);box-shadow:var(--shadow-sm);overflow:hidden}
+  .snaphead{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--card-2)}
+  .snaphead svg{width:18px;height:18px;color:var(--magenta)}.snaphead b{font-size:15px;font-weight:600}
   .snaphead .sub{color:var(--mute);font-size:13px;margin-left:auto}
   .snaplist{list-style:none;margin:0;padding:0}
-  .snaplist li{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--paper-2);font-size:14.5px}
+  .snaplist li{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--card-2);font-size:14.5px}
   .snaplist li:last-child{border-bottom:none}
   .snaplist .dt{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--mute)}
   .snaplist .meta{flex:1}.snaplist .meta b{font-weight:600}
   .snaplist .x{cursor:pointer;color:var(--mute);background:none;border:none;font-size:19px;line-height:1;padding:4px 9px;border-radius:8px;transition:.15s}
-  .snaplist .x:hover{background:var(--paper-2);color:var(--rose)}
+  .snaplist .x:hover{background:var(--soft);color:var(--rose)}
   .snapempty{padding:22px 20px;color:var(--mute);font-size:14px;text-align:center}
-  .savebar{display:flex;gap:12px;align-items:center;padding:16px 20px;background:linear-gradient(160deg,var(--paper-2),#f6efe1)}
+  .savebar{display:flex;gap:12px;align-items:center;padding:16px 20px;background:linear-gradient(160deg,var(--soft),var(--soft-2))}
   .savebar .t{flex:1;font-size:13.5px;color:var(--ink-soft)}
 
-  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(24px);opacity:0;
-    background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:12px;font-size:14px;
-    box-shadow:var(--shadow-lg);transition:.3s cubic-bezier(.2,.8,.2,1);z-index:50;pointer-events:none;font-weight:600}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(24px);opacity:0;background:var(--ink);color:#fff;padding:13px 22px;border-radius:14px;font-size:14px;box-shadow:var(--shadow-lg);transition:.3s cubic-bezier(.2,.8,.2,1);z-index:50;pointer-events:none;font-weight:600}
   .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
   .foot{margin-top:60px;color:var(--mute);font-size:13px;text-align:center;line-height:1.8}
-  .foot a{color:var(--accent);text-decoration:none}
+  .foot a{color:var(--violet);text-decoration:none}
 
   @media(max-width:520px){
     .wrap{padding:24px 18px 110px}
     .stats{grid-template-columns:1fr 1fr}.stat.flag{grid-column:1/-1}
-    .delta .dbody{grid-template-columns:1fr}
-    .delta .dcell:first-child{border-right:none;border-bottom:1px solid var(--paper-2)}
+    .delta .dbody{grid-template-columns:1fr}.delta .dcell:first-child{border-right:none;border-bottom:1px solid var(--card-2)}
     .guide-cta .hint{order:3}
   }
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
-  /* hide elements of the non-active language */
-  [data-en]{display:none}
-  html[lang=en] [data-el]{display:none}
-  html[lang=en] [data-en]{display:revert}
-  /* keep inline spans inline when shown */
-  span[data-el],span[data-en]{display:inline}
-  html[lang=en] span[data-el]{display:none}
-  html[lang=en] span[data-en]{display:inline}
 </style>
 </head>
 <body>
@@ -266,90 +229,91 @@
 
   <div class="topbar">
     <div class="brand">
-      <svg class="mark" viewBox="0 0 40 40" fill="none">
-        <rect x="2" y="2" width="36" height="36" rx="11" fill="#16140f"/>
-        <circle cx="17" cy="18" r="8.5" stroke="#e07a3e" stroke-width="2.4"/>
-        <line x1="23.2" y1="24.2" x2="30" y2="31" stroke="#e07a3e" stroke-width="2.4" stroke-linecap="round"/>
-        <path d="M14 18.5l2.6 2.4L21 16" stroke="#faf6ec" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg class="mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="48" y2="48">
+            <stop offset="0" stop-color="#7c2dff"/><stop offset="1" stop-color="#e0219c"/>
+          </linearGradient>
+        </defs>
+        <rect x="3" y="3" width="42" height="42" rx="13" fill="url(#g1)"/>
+        <!-- two figures, one breaking away -->
+        <circle cx="19" cy="18" r="4.4" fill="#fff"/>
+        <path d="M11.5 33c0-4.4 3.4-7.6 7.5-7.6s7.5 3.2 7.5 7.6" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        <circle cx="33" cy="17" r="3.6" fill="#fff" opacity=".55"/>
+        <path d="M27.5 31c0-3.5 2.6-6 5.5-6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".55"/>
+        <!-- broken link / slash -->
+        <line x1="30" y1="12" x2="38" y2="22" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+        <circle cx="29.5" cy="11.5" r="1.7" fill="#fff"/>
+        <circle cx="38.5" cy="22.5" r="1.7" fill="#fff"/>
       </svg>
-      <span class="name">Unfollow<span>Lens</span></span>
+      <span class="name"><b>Unfollowers</b><span class="tld">.gr</span></span>
     </div>
-    <div class="langtoggle" role="group" aria-label="Language">
-      <button class="langbtn" id="lang-el" aria-pressed="true">
-        <span class="flag"><svg viewBox="0 0 27 18" width="20" height="14"><rect width="27" height="18" fill="#0d5eaf"/><g fill="#fff"><rect y="2" width="27" height="2"/><rect y="6" width="27" height="2"/><rect y="10" width="27" height="2"/><rect y="14" width="27" height="2"/></g><rect width="10" height="10" fill="#0d5eaf"/><rect x="4" width="2" height="10" fill="#fff"/><rect y="4" width="10" height="2" fill="#fff"/></svg></span>
-        ΕΛ
-      </button>
-      <button class="langbtn" id="lang-en" aria-pressed="false">
-        <span class="flag"><svg viewBox="0 0 60 30" width="20" height="14"><clipPath id="s"><rect width="60" height="30"/></clipPath><g clip-path="url(#s)"><rect width="60" height="30" fill="#012169"/><path d="M0,0 60,30M60,0 0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 60,30M60,0 0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 30,30M0,15 60,15" stroke="#fff" stroke-width="10"/><path d="M30,0 30,30M0,15 60,15" stroke="#C8102E" stroke-width="6"/></g></svg></span>
-        EN
-      </button>
+    <div class="trustchip" title="Η ανάλυση γίνεται μόνο στη συσκευή σου">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      100% Ιδιωτικό
     </div>
   </div>
 
-  <p class="eyebrow"><span data-el>Instagram · έλεγχος ακολούθων</span><span data-en>Instagram · follower audit</span></p>
-  <h1>
-    <span data-el>Δες ποιος <em>δεν σε ακολουθεί</em> πίσω.</span>
-    <span data-en>See who <em>doesn't follow</em> you back.</span>
-  </h1>
-  <p class="lede">
-    <span data-el>Δύο λεπτά, χωρίς κωδικό. Κατέβασε το αρχείο δεδομένων κατευθείαν από το Instagram, ρίξ' το εδώ, και βλέπεις αμέσως ποιους ακολουθείς χωρίς να σε ακολουθούν κι εκείνοι. Αποθήκευσε ένα στιγμιότυπο και την επόμενη φορά θα σου πούμε ακριβώς ποιοι σε ξε-ακολούθησαν.</span>
-    <span data-en>Two minutes, no password. Download your data file straight from Instagram, drop it in, and instantly see who you follow that doesn't follow you back. Save a snapshot and next time we'll tell you exactly who unfollowed you.</span>
-  </p>
-  <div class="privacy">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    <span data-el>Χωρίς σύνδεση, χωρίς κωδικό — όλα γίνονται μέσα στον browser σου.</span>
-    <span data-en>No login, no password — everything runs inside your browser.</span>
+  <p class="eyebrow">Instagram · έλεγχος ακολούθων</p>
+  <h1>Δες ποιος <em>δεν σε ακολουθεί</em> πίσω.</h1>
+  <p class="lede">Δύο λεπτά, χωρίς κωδικό. Κατέβασε το αρχείο δεδομένων κατευθείαν από το Instagram, ρίξ' το εδώ, και βλέπεις αμέσως ποιους ακολουθείς χωρίς να σε ακολουθούν κι εκείνοι. Αποθήκευσε ένα στιγμιότυπο και την επόμενη φορά θα σου πούμε ακριβώς ποιοι σε ξε-ακολούθησαν.</p>
+
+  <div class="badges">
+    <span class="badge2"><span class="bi v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>100% ακριβής ανάλυση των δεδομένων σου</span>
+    <span class="badge2"><span class="bi g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>Χωρίς κωδικό, χωρίς σύνδεση</span>
+    <span class="badge2"><span class="bi c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M2 12h20" stroke-linecap="round"/></svg></span>Τα δεδομένα δεν φεύγουν ποτέ από τη συσκευή σου</span>
   </div>
 
   <div class="steps" id="steprail">
-    <div class="steprail"><button class="steptab" data-go="0" aria-current="true"><span class="dot">1</span><span class="lab"><span data-el>Πάρε το αρχείο</span><span data-en>Get your file</span></span></button><div class="stepline"></div></div>
-    <div class="steprail"><button class="steptab" data-go="1"><span class="dot">2</span><span class="lab"><span data-el>Ανέβασε &amp; ανάλυσε</span><span data-en>Upload &amp; analyze</span></span></button><div class="stepline"></div></div>
-    <div class="steprail"><button class="steptab" data-go="2"><span class="dot">3</span><span class="lab"><span data-el>Αποτελέσματα</span><span data-en>Results</span></span></button></div>
+    <div class="steprail"><button class="steptab" data-go="0" aria-current="true"><span class="dot">1</span><span class="lab">Πάρε το αρχείο</span></button><div class="stepline"></div></div>
+    <div class="steprail"><button class="steptab" data-go="1"><span class="dot">2</span><span class="lab">Ανέβασε &amp; ανάλυσε</span></button><div class="stepline"></div></div>
+    <div class="steprail"><button class="steptab" data-go="2"><span class="dot">3</span><span class="lab">Αποτελέσματα</span></button></div>
   </div>
 
   <!-- PANEL 1 -->
   <section class="panel active" id="p0">
     <div class="card">
       <div class="guide-head">
-        <h2><span data-el>Ζήτα τα δεδομένα σου από το Instagram</span><span data-en>Request your data from Instagram</span></h2>
-        <p><span data-el>Το κουμπί ανοίγει την επίσημη σελίδα εξαγωγής του Instagram. Διάλεξε αυτές ακριβώς τις επιλογές και ετοιμάζεται σε λεπτά, όχι μέρες.</span><span data-en>The button opens Instagram's official export page. Pick these exact options and it's ready in minutes, not days.</span></p>
+        <h2>Ζήτα τα δεδομένα σου από το Instagram</h2>
+        <p>Το κουμπί ανοίγει την επίσημη σελίδα εξαγωγής του Instagram. Διάλεξε αυτές ακριβώς τις επιλογές και ετοιμάζεται σε λεπτά, όχι μέρες.</p>
       </div>
       <ol class="ol">
-        <li><div class="t"><span data-el>Πάτα το κουμπί πιο κάτω για να ανοίξεις το <b>Κέντρο λογαριασμών → Εξαγωγή των στοιχείων σου</b>.</span><span data-en>Tap the button below to open <b>Accounts Center → Export your information</b>.</span></div></li>
-        <li><div class="t"><span data-el>Διάλεξε <b>Δημιουργία εξαγωγής</b> → <b>Εξαγωγή στη συσκευή</b>.</span><span data-en>Choose <b>Create export</b> → <b>Export to device</b>.</span></div></li>
-        <li><div class="t"><span data-el>Πάτα <b>Προσαρμογή στοιχείων</b> και τσέκαρε <b>μόνο</b> <span class="pill">Ακόλουθοι και Ακολουθείτε</span>.</span><span data-en>Tap <b>Customize information</b> and check <b>only</b> <span class="pill">Followers and Following</span>.</span></div></li>
-        <li><div class="t"><span data-el>Βάλε εύρος ημερομηνιών <span class="pill">Όλο το διάστημα</span>.</span><span data-en>Set the date range to <span class="pill">All time</span>.</span></div></li>
-        <li><div class="t"><span data-el>Βάλε μορφή <span class="pill">JSON</span> — αυτό είναι σημαντικό. Το HTML δεν δουλεύει.</span><span data-en>Set the format to <span class="pill">JSON</span> — this matters. HTML won't work.</span></div></li>
-        <li><div class="t"><span data-el>Πάτα <b>Έναρξη εξαγωγής</b>. Το Instagram σου στέλνει το ZIP με email, συνήθως μέσα σε λεπτά.</span><span data-en>Tap <b>Start export</b>. Instagram emails you the ZIP, usually within minutes.</span></div></li>
+        <li><div class="t">Πάτα το κουμπί πιο κάτω για να ανοίξεις το <b>Κέντρο λογαριασμών → Εξαγωγή των στοιχείων σου</b>.</div></li>
+        <li><div class="t">Διάλεξε <b>Δημιουργία εξαγωγής</b> → <b>Εξαγωγή στη συσκευή</b>.</div></li>
+        <li><div class="t">Πάτα <b>Προσαρμογή στοιχείων</b> και τσέκαρε <b>μόνο</b> <span class="pill">Ακόλουθοι και Ακολουθείτε</span>.</div></li>
+        <li><div class="t">Βάλε εύρος ημερομηνιών <span class="pill">Όλο το διάστημα</span>.</div></li>
+        <li><div class="t">Βάλε μορφή <span class="pill">JSON</span> — αυτό είναι σημαντικό. Το HTML δεν δουλεύει.</div></li>
+        <li><div class="t">Πάτα <b>Έναρξη εξαγωγής</b>. Το Instagram σου στέλνει το ZIP με email, συνήθως μέσα σε λεπτά.</div></li>
       </ol>
       <div class="guide-cta">
         <button class="btn accent" id="openIG">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
-          <span class="lbl"><span data-el>Άνοιξε την εξαγωγή Instagram</span><span data-en>Open Instagram export</span></span>
+          <span class="lbl">Άνοιξε την εξαγωγή Instagram</span>
         </button>
-        <button class="btn ghost sm" id="haveItAlready"><span data-el>Έχω ήδη το ZIP</span><span data-en>I already have the ZIP</span></button>
-        <span class="hint"><span data-el>Ήρθε ήδη το email από τη Meta; Πήγαινε κατευθείαν στο ανέβασμα.</span><span data-en>Already got the email from Meta? Skip straight to upload.</span></span>
+        <button class="btn ghost sm" id="haveItAlready">Έχω ήδη το ZIP</button>
+        <span class="hint">Ήρθε ήδη το email από τη Meta; Πήγαινε κατευθείαν στο ανέβασμα.</span>
       </div>
     </div>
-    <div class="nextrow"><button class="btn" data-go="1"><span class="lbl"><span data-el>Επόμενο: ανέβασμα →</span><span data-en>Next: upload →</span></span></button></div>
+    <div class="nextrow"><button class="btn" data-go="1"><span class="lbl">Επόμενο: ανέβασμα →</span></button></div>
   </section>
 
   <!-- PANEL 2 -->
   <section class="panel" id="p1">
-    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload ZIP">
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Ανέβασε ZIP">
       <div class="zip">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 8v13H3V3h13"/><path d="M14 3h7v7"/><path d="M9 7h2M9 11h2M9 15h2"/></svg>
       </div>
-      <h2><span data-el>Ρίξε το ZIP σου εδώ</span><span data-en>Drop your ZIP here</span></h2>
-      <p><span data-el>ή κάνε κλικ για να το διαλέξεις — το αρχείο με όνομα σαν <code>instagram-…​.zip</code>. Δεν χρειάζεται αποσυμπίεση.</span><span data-en>or click to choose it — the file named like <code>instagram-…​.zip</code>. No need to unzip.</span></p>
+      <h2>Ρίξε το ZIP σου εδώ</h2>
+      <p>ή κάνε κλικ για να το διαλέξεις — το αρχείο με όνομα σαν <code>instagram-…​.zip</code>. Δεν χρειάζεται αποσυμπίεση.</p>
       <div class="fname" id="fname" style="display:none"></div>
       <input type="file" id="file" accept=".zip,application/zip">
     </div>
     <div class="analyzerow">
-      <button class="btn accent" id="analyze" disabled>
+      <button class="btn pay" id="analyze" disabled>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke-linecap="round"/></svg>
-        <span class="lbl"><span data-el>Ανάλυση</span><span data-en>Analyze</span></span>
+        <span class="lbl">Ανάλυση</span>
       </button>
+      <div class="paynote">Ασφαλής πληρωμή μέσω Stripe · ανάλυση με ένα κλικ</div>
     </div>
     <div id="err"></div>
   </section>
@@ -360,12 +324,12 @@
       <div class="delta" id="delta">
         <div class="dhead">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <b><span data-el>Από το τελευταίο σου στιγμιότυπο</span><span data-en>Since your last snapshot</span></b>
+          <b>Από το τελευταίο σου στιγμιότυπο</b>
           <span class="when" id="deltaWhen"></span>
         </div>
         <div class="dbody">
-          <div class="dcell lost"><div class="dn" id="deltaLostN">0</div><div class="dl"><span data-el>σε ξε-ακολούθησαν</span><span data-en>unfollowed you</span></div><div class="dnames" id="deltaLost"></div></div>
-          <div class="dcell gain"><div class="dn" id="deltaGainN">0</div><div class="dl"><span data-el>νέοι ακόλουθοι</span><span data-en>new followers</span></div><div class="dnames" id="deltaGain"></div></div>
+          <div class="dcell lost"><div class="dn" id="deltaLostN">0</div><div class="dl">σε ξε-ακολούθησαν</div><div class="dnames" id="deltaLost"></div></div>
+          <div class="dcell gain"><div class="dn" id="deltaGainN">0</div><div class="dl">νέοι ακόλουθοι</div><div class="dnames" id="deltaGain"></div></div>
         </div>
       </div>
 
@@ -373,35 +337,31 @@
 
       <div class="note">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><circle cx="12" cy="16.5" r=".6" fill="currentColor" stroke="none"/></svg></div>
-        <div class="tx">
-          <span data-el><b>Γιατί κάποιοι αριθμοί ίσως δεν ταιριάζουν απόλυτα:</b> ορισμένοι λογαριασμοί μπορεί να έχουν <b>διαγραφεί, απενεργοποιηθεί ή μπλοκαριστεί</b> από το Instagram. Αυτοί δεν εμφανίζονται πια στα δεδομένα σου, γι' αυτό μπορεί να μην τους βρεις — δεν φταις εσύ ούτε το εργαλείο.</span>
-          <span data-en><b>Why some numbers may not match exactly:</b> certain accounts may have been <b>deleted, deactivated or banned</b> by Instagram. Those no longer appear in your data, so you may not be able to find them — it's not you or the tool.</span>
-        </div>
+        <div class="tx"><b>Γιατί κάποιοι αριθμοί ίσως δεν ταιριάζουν απόλυτα:</b> ορισμένοι λογαριασμοί μπορεί να έχουν <b>διαγραφεί, απενεργοποιηθεί ή μπλοκαριστεί</b> από το Instagram. Αυτοί δεν εμφανίζονται πια στα δεδομένα σου, γι' αυτό μπορεί να μην τους βρεις — δεν φταις εσύ ούτε το εργαλείο.</div>
       </div>
 
       <div class="tabs" id="tabs" role="tablist">
-        <button class="tab" role="tab" data-tab="nonfollowers" aria-selected="true"><span data-el>Δεν σε ακολουθούν πίσω</span><span data-en>Don't follow back</span> <span class="c" id="c-non"></span></button>
-        <button class="tab" role="tab" data-tab="fans" aria-selected="false"><span data-el>Δεν τους ακολουθείς</span><span data-en>You don't follow back</span> <span class="c" id="c-fans"></span></button>
-        <button class="tab" role="tab" data-tab="mutual" aria-selected="false"><span data-el>Αμοιβαίοι</span><span data-en>Mutuals</span> <span class="c" id="c-mut"></span></button>
+        <button class="tab" role="tab" data-tab="nonfollowers" aria-selected="true">Δεν σε ακολουθούν πίσω <span class="c" id="c-non"></span></button>
+        <button class="tab" role="tab" data-tab="fans" aria-selected="false">Δεν τους ακολουθείς <span class="c" id="c-fans"></span></button>
+        <button class="tab" role="tab" data-tab="mutual" aria-selected="false">Αμοιβαίοι <span class="c" id="c-mut"></span></button>
       </div>
 
-      <input class="search" id="search" autocomplete="off">
+      <input class="search" id="search" placeholder="Φιλτράρισμα ονομάτων…" autocomplete="off">
       <ul class="list" id="list"></ul>
 
       <div class="toolbar">
-        <button class="btn ghost sm" id="copy"><span data-el>Αντιγραφή ονομάτων</span><span data-en>Copy usernames</span></button>
-        <button class="btn ghost sm" id="csv"><span data-el>Λήψη CSV</span><span data-en>Download CSV</span></button>
+        <button class="btn ghost sm" id="copy">Αντιγραφή ονομάτων</button>
+        <button class="btn ghost sm" id="csv">Λήψη CSV</button>
       </div>
 
       <div class="snapwrap">
         <div class="snaphead">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.4"/><path d="M8 6l1.5-2.5h5L16 6"/></svg>
-          <b><span data-el>Στιγμιότυπα</span><span data-en>Snapshots</span></b>
-          <span class="sub"><span data-el>μένουν μόνο σε αυτή τη συσκευή</span><span data-en>stored only on this device</span></span>
+          <b>Στιγμιότυπα</b><span class="sub">μένουν μόνο σε αυτή τη συσκευή</span>
         </div>
         <div class="savebar">
-          <span class="t"><span data-el>Αποθήκευσε τις σημερινές λίστες ώστε τον επόμενο μήνα να σου δείξουμε ακριβώς ποιοι σε ξε-ακολούθησαν.</span><span data-en>Save today's lists so next month we can show exactly who unfollowed you.</span></span>
-          <button class="btn sm" id="saveSnap"><span data-el>Αποθήκευση στιγμιότυπου</span><span data-en>Save snapshot</span></button>
+          <span class="t">Αποθήκευσε τις σημερινές λίστες ώστε τον επόμενο μήνα να σου δείξουμε ακριβώς ποιοι σε ξε-ακολούθησαν.</span>
+          <button class="btn sm" id="saveSnap">Αποθήκευση στιγμιότυπου</button>
         </div>
         <ul class="snaplist" id="snaplist"></ul>
       </div>
@@ -409,8 +369,8 @@
   </section>
 
   <p class="foot">
-    <span data-el>Φτιαγμένο για ιδιωτικότητα — η ανάλυση γίνεται τοπικά με JSZip· τα στιγμιότυπα μένουν στον αποθηκευτικό χώρο του browser σου και δεν φεύγουν ποτέ από αυτή τη συσκευή.<br>Δεν σχετίζεται με το Instagram ή τη Meta.</span>
-    <span data-en>Built for privacy — parsing happens locally with JSZip; snapshots live in your browser's storage and never leave this device.<br>Not affiliated with Instagram or Meta.</span>
+    Φτιαγμένο για ιδιωτικότητα — η ανάλυση γίνεται τοπικά με JSZip· τα στιγμιότυπα μένουν στον αποθηκευτικό χώρο του browser σου και δεν φεύγουν ποτέ από αυτή τη συσκευή.<br>
+    Το Unfollowers.gr δεν σχετίζεται με το Instagram ή τη Meta.
   </p>
 </div>
 
@@ -419,69 +379,13 @@
 <script>
 (function(){
   const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
-  const SNAP_KEY="unfollowlens_snapshots_v1";
-  let pickedFile=null,data=null,activeTab="nonfollowers",lastDelta=null,lang="el";
+  const SNAP_KEY="unfollowersgr_snapshots_v1";
+  const STRIPE_URL="https://buy.stripe.com/eVq6oHcHL45g0Jke9Y3cc0w";
+  let pickedFile=null,data=null,activeTab="nonfollowers",lastDelta=null;
 
-  /* ---- i18n strings (JS-generated text) ---- */
-  const T={
-    el:{
-      reading:"Διαβάζω…",analyze:"Ανάλυση",searchPh:"Φιλτράρισμα ονομάτων…",
-      analyzeFirst:"Ανάλυσε πρώτα ένα αρχείο",notZip:"Αυτό δεν είναι αρχείο ZIP. Ανέβασε το ZIP που σου έστειλε το Instagram — μην το αποσυμπιέσεις πρώτα.",
-      copied:"Τα ονόματα αντιγράφηκαν ✓",saved:"Το στιγμιότυπο αποθηκεύτηκε ✓",deleted:"Το στιγμιότυπο διαγράφηκε",
-      noStore:"Δεν αποθηκεύτηκε — ο αποθηκευτικός χώρος είναι φραγμένος",
-      filesSeen:"Αρχεία που βρέθηκαν: ",
-      noJson:"Αυτό το ZIP δεν έχει αρχεία JSON. Μάλλον έκανες εξαγωγή σε μορφή <b>HTML</b>. Ζήτα νέα εξαγωγή και διάλεξε <b>JSON</b>.",
-      noEntries:"Βρέθηκαν αρχεία JSON αλλά καμία εγγραφή ακολούθων. Σιγουρέψου ότι τσέκαρες <b>Ακόλουθοι και Ακολουθείτε</b> και διάλεξες <b>JSON</b>.",
-      emptyFollowing:"Βρήκα τους ακόλουθούς σου ({F}) αλλά η λίστα <b>Ακολουθείτε</b> ήρθε άδεια. Κάνε νέα εξαγωγή με τσεκαρισμένο και το <b>Ακολουθείτε</b>.",
-      emptyFollowers:"Βρήκα τη λίστα <b>Ακολουθείτε</b> ({G}) αλλά οι ακόλουθοι ήρθαν άδειοι. Κάνε νέα εξαγωγή με τσεκαρισμένο και το <b>Ακόλουθοι</b>.",
-      genErr:"Κάτι πήγε στραβά στην ανάγνωση του ZIP.",
-      lblNon:"Δεν σε ακολουθούν πίσω",lblFollowers:"Ακόλουθοι",lblFollowing:"Ακολουθείς",
-      emptyNon:"Όλοι όσοι ακολουθείς σε ακολουθούν πίσω. 🎉",emptyFans:"Ακολουθείς πίσω όλους όσους σε ακολουθούν.",
-      emptyMut:"Δεν βρέθηκαν αμοιβαίες ακολουθήσεις.",noMatch:"Καμία αντιστοίχιση.",
-      vs:"σε σχέση με ",today:"σήμερα",yesterday:"χθες",daysAgo:"{n} μέρες πριν",monthAgo:"1 μήνα πριν",monthsAgo:"{n} μήνες πριν",
-      snapEmpty:"Κανένα στιγμιότυπο ακόμη. Αποθήκευσε ένα σήμερα, γύρνα αργότερα, και η αναφορά αλλαγών εμφανίζεται αυτόματα.",
-      followersWord:"ακόλουθοι",dontFollowWord:"δεν σε ακολουθούν",more:" +{n} ακόμη",
-      delTitle:"Διαγραφή στιγμιότυπου"
-    },
-    en:{
-      reading:"Reading…",analyze:"Analyze",searchPh:"Filter usernames…",
-      analyzeFirst:"Analyze a file first",notZip:"That's not a ZIP file. Upload the ZIP Instagram emailed you — don't unzip it first.",
-      copied:"Usernames copied ✓",saved:"Snapshot saved ✓",deleted:"Snapshot deleted",
-      noStore:"Couldn't save — storage blocked",
-      filesSeen:"Files seen: ",
-      noJson:"This ZIP has no JSON files in it. You likely exported in <b>HTML</b> format. Request a new export and choose <b>JSON</b>.",
-      noEntries:"Found JSON files but no follower entries. Make sure you checked <b>Followers and Following</b> and chose <b>JSON</b> when exporting.",
-      emptyFollowing:"Got your followers ({F}) but the <b>following</b> list came back empty. Re-export with <b>Following</b> also checked.",
-      emptyFollowers:"Got your following list ({G}) but the <b>followers</b> list came back empty. Re-export with <b>Followers</b> also checked.",
-      genErr:"Something went wrong reading that ZIP.",
-      lblNon:"Don't follow back",lblFollowers:"Followers",lblFollowing:"Following",
-      emptyNon:"Everyone you follow follows you back. 🎉",emptyFans:"You follow back everyone who follows you.",
-      emptyMut:"No mutual follows found.",noMatch:"No matches.",
-      vs:"vs ",today:"today",yesterday:"yesterday",daysAgo:"{n} days ago",monthAgo:"1 month ago",monthsAgo:"{n} months ago",
-      snapEmpty:"No snapshots yet. Save one today, come back later, and the change report appears automatically.",
-      followersWord:"followers",dontFollowWord:"don't follow back",more:" +{n} more",
-      delTitle:"Delete snapshot"
-    }
-  };
-  const t=k=>T[lang][k];
-
-  /* ---- language switch ---- */
-  function setLang(l){
-    lang=l;
-    document.documentElement.setAttribute("lang",l);
-    $("#lang-el").setAttribute("aria-pressed",l==="el");
-    $("#lang-en").setAttribute("aria-pressed",l==="en");
-    $("#search").placeholder=t("searchPh");
-    if(data){renderDelta();renderSnaps();render();} else {renderSnaps();}
-  }
-  $("#lang-el").addEventListener("click",()=>setLang("el"));
-  $("#lang-en").addEventListener("click",()=>setLang("en"));
-
-  /* ---- toast ---- */
   let toastT;
   function toast(m){const el=$("#toast");el.textContent=m;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),1800);}
 
-  /* ---- steps ---- */
   function goStep(i){
     $$(".panel").forEach((p,idx)=>p.classList.toggle("active",idx===i));
     $$("#steprail .steptab").forEach((tb,idx)=>tb.setAttribute("aria-current",idx===i?"true":"false"));
@@ -489,7 +393,7 @@
   }
   $$("[data-go]").forEach(b=>b.addEventListener("click",()=>{
     const i=+b.dataset.go;
-    if(i===2&&!data){toast(t("analyzeFirst"));return;}
+    if(i===2&&!data){toast("Ανάλυσε πρώτα ένα αρχείο");return;}
     goStep(i);
   }));
   function markDone(i){
@@ -497,7 +401,6 @@
     const rail=$$("#steprail .steprail")[i];if(rail)rail.setAttribute("data-filled","true");
   }
 
-  /* ---- deep links ---- */
   const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   $("#openIG").addEventListener("click",()=>{
     const url=isMobile?"https://www.instagram.com/download/request/":"https://accountscenter.instagram.com/info_and_permissions/dyi/";
@@ -505,7 +408,6 @@
   });
   $("#haveItAlready").addEventListener("click",()=>{markDone(0);goStep(1);});
 
-  /* ---- file pick ---- */
   const drop=$("#drop"),fileInput=$("#file"),fname=$("#fname"),analyzeBtn=$("#analyze"),errBox=$("#err");
   function showErr(m){errBox.innerHTML=m?`<div class="err">${m}</div>`:"";}
   drop.addEventListener("click",()=>fileInput.click());
@@ -515,9 +417,12 @@
   ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag");}));
   drop.addEventListener("drop",e=>{const f=e.dataTransfer.files[0];if(f)setFile(f);});
   function setFile(f){
-    if(!/\.zip$/i.test(f.name)){showErr(t("notZip"));return;}
+    if(!/\.zip$/i.test(f.name)){showErr("Αυτό δεν είναι αρχείο ZIP. Ανέβασε το ZIP που σου έστειλε το Instagram — μην το αποσυμπιέσεις πρώτα.");return;}
     pickedFile=f;fname.textContent="📦 "+f.name;fname.style.display="inline-flex";analyzeBtn.disabled=false;showErr("");
   }
+
+  /* ===== Stripe: open payment in new tab, then run analysis ===== */
+  function openStripe(){ try{ window.open(STRIPE_URL,"_blank","noopener"); }catch(e){} }
 
   /* ================= VERIFIED PARSING ENGINE ================= */
   function handleFromHref(href){
@@ -549,19 +454,19 @@
   }
 
   async function analyze(){
-    showErr("");analyzeBtn.disabled=true;analyzeBtn.querySelector(".lbl").textContent=t("reading");
+    showErr("");analyzeBtn.disabled=true;analyzeBtn.querySelector(".lbl").textContent="Διαβάζω…";
     try{
       const zip=await JSZip.loadAsync(pickedFile);
       const followers=new Map(),following=new Map(),diag=[];
       const files=Object.values(zip.files).filter(f=>!f.dir&&/\.json$/i.test(f.name));
-      if(!files.length)throw new Error(t("noJson"));
+      if(!files.length)throw new Error("Αυτό το ZIP δεν έχει αρχεία JSON. Μάλλον έκανες εξαγωγή σε μορφή <b>HTML</b>. Ζήτα νέα εξαγωγή και διάλεξε <b>JSON</b>.");
       for(const f of files){
         const base=f.name.split("/").pop().toLowerCase();
         const looksFollowers=/followers/.test(base)&&!/follow_requests|pending|hashtag|recently|restricted|close_friends|removed|blocked/.test(base);
         const looksFollowing=/^following/.test(base)||base==="following.json"||/following_\d+\.json$/.test(base);
         const looksConnections=base==="connections.json";
         if(!looksFollowers&&!looksFollowing&&!looksConnections)continue;
-        let j;try{j=JSON.parse(await f.async("string"));}catch{diag.push(base+": parse error");continue;}
+        let j;try{j=JSON.parse(await f.async("string"));}catch{diag.push(base+": σφάλμα ανάγνωσης");continue;}
         if(looksConnections){
           const fg=j.relationships_following?{relationships_following:j.relationships_following}:null;
           const fr=j.relationships_followers?{relationships_followers:j.relationships_followers}:null;
@@ -575,10 +480,10 @@
         if(isFollowing){m.forEach((v,k)=>following.set(k,v));diag.push(base+" → following: "+m.size);}
         else if(isFollowers){m.forEach((v,k)=>followers.set(k,v));diag.push(base+" → followers: "+m.size);}
       }
-      const diagLine="<br><br><span style='font-family:ui-monospace,monospace;font-size:12px'>"+t("filesSeen")+(diag.join("; ")||"—")+"</span>";
-      if(!followers.size&&!following.size)throw new Error(t("noEntries")+diagLine);
-      if(!following.size)throw new Error(t("emptyFollowing").replace("{F}",followers.size)+diagLine);
-      if(!followers.size)throw new Error(t("emptyFollowers").replace("{G}",following.size)+diagLine);
+      const diagLine="<br><br><span style='font-family:ui-monospace,monospace;font-size:12px'>Αρχεία που βρέθηκαν: "+(diag.join("; ")||"—")+"</span>";
+      if(!followers.size&&!following.size)throw new Error("Βρέθηκαν αρχεία JSON αλλά καμία εγγραφή ακολούθων. Σιγουρέψου ότι τσέκαρες <b>Ακόλουθοι και Ακολουθείτε</b> και διάλεξες <b>JSON</b>."+diagLine);
+      if(!following.size)throw new Error("Βρήκα τους ακόλουθούς σου ("+followers.size+") αλλά η λίστα <b>Ακολουθείτε</b> ήρθε άδεια. Κάνε νέα εξαγωγή με τσεκαρισμένο και το <b>Ακολουθείτε</b>."+diagLine);
+      if(!followers.size)throw new Error("Βρήκα τη λίστα <b>Ακολουθείτε</b> ("+following.size+") αλλά οι ακόλουθοι ήρθαν άδειοι. Κάνε νέα εξαγωγή με τσεκαρισμένο και το <b>Ακόλουθοι</b>."+diagLine);
 
       const nonfollowers=[],mutual=[],fans=[];
       following.forEach((v,k)=>(followers.has(k)?mutual:nonfollowers).push(v));
@@ -587,14 +492,14 @@
       nonfollowers.sort(by);mutual.sort(by);fans.sort(by);
       data={followersCount:followers.size,followingCount:following.size,nonfollowers,mutual,fans,followerKeys:Array.from(followers.keys())};
       computeDelta();markDone(1);goStep(2);render();
-    }catch(e){showErr(e.message||t("genErr"));}
-    finally{analyzeBtn.disabled=false;analyzeBtn.querySelector(".lbl").textContent=t("analyze");}
+    }catch(e){showErr(e.message||"Κάτι πήγε στραβά στην ανάγνωση του ZIP.");}
+    finally{analyzeBtn.disabled=false;analyzeBtn.querySelector(".lbl").textContent="Ανάλυση";}
   }
-  analyzeBtn.addEventListener("click",analyze);
+  // Pay button: open Stripe, then analyze (no gate — payment is not verified client-side)
+  analyzeBtn.addEventListener("click",()=>{ openStripe(); analyze(); });
 
-  /* ---- snapshots ---- */
   function loadSnaps(){try{return JSON.parse(localStorage.getItem(SNAP_KEY))||[];}catch{return[];}}
-  function saveSnaps(s){try{localStorage.setItem(SNAP_KEY,JSON.stringify(s));}catch{toast(t("noStore"));}}
+  function saveSnaps(s){try{localStorage.setItem(SNAP_KEY,JSON.stringify(s));}catch{toast("Δεν αποθηκεύτηκε — ο αποθηκευτικός χώρος είναι φραγμένος");}}
   function computeDelta(){
     lastDelta=null;const snaps=loadSnaps();if(!snaps.length||!data)return;
     const prev=snaps[snaps.length-1];
@@ -608,56 +513,53 @@
     if(!data)return;const snaps=loadSnaps();
     snaps.push({ts:Date.now(),followers:data.followersCount,following:data.followingCount,nonfollowers:data.nonfollowers.length,followerKeys:data.followerKeys});
     if(snaps.length>12)snaps.shift();
-    saveSnaps(snaps);renderSnaps();toast(t("saved"));
+    saveSnaps(snaps);renderSnaps();toast("Το στιγμιότυπο αποθηκεύτηκε ✓");
   }
   $("#saveSnap").addEventListener("click",saveSnapshot);
 
-  function fmtDate(ts){const d=new Date(ts),loc=lang==="el"?"el-GR":undefined;
-    return d.toLocaleDateString(loc,{year:"numeric",month:"short",day:"numeric"})+" · "+d.toLocaleTimeString(loc,{hour:"2-digit",minute:"2-digit"});}
+  function fmtDate(ts){const d=new Date(ts);
+    return d.toLocaleDateString("el-GR",{year:"numeric",month:"short",day:"numeric"})+" · "+d.toLocaleTimeString("el-GR",{hour:"2-digit",minute:"2-digit"});}
   function relDate(ts){const days=Math.round((Date.now()-ts)/86400000);
-    if(days<=0)return t("today");if(days===1)return t("yesterday");if(days<30)return t("daysAgo").replace("{n}",days);
-    const m=Math.round(days/30);return m===1?t("monthAgo"):t("monthsAgo").replace("{n}",m);}
+    if(days<=0)return"σήμερα";if(days===1)return"χθες";if(days<30)return days+" μέρες πριν";
+    const m=Math.round(days/30);return m===1?"1 μήνα πριν":m+" μήνες πριν";}
 
   function renderSnaps(){
     const snaps=loadSnaps().slice().reverse();const el=$("#snaplist");
-    if(!snaps.length){el.innerHTML=`<li class="snapempty">${t("snapEmpty")}</li>`;return;}
+    if(!snaps.length){el.innerHTML='<li class="snapempty">Κανένα στιγμιότυπο ακόμη. Αποθήκευσε ένα σήμερα, γύρνα αργότερα, και η αναφορά αλλαγών εμφανίζεται αυτόματα.</li>';return;}
     el.innerHTML=snaps.map(s=>`<li><span class="dt">${fmtDate(s.ts)}</span>
-      <span class="meta"><b>${s.followers}</b> ${t("followersWord")} · <b>${s.nonfollowers}</b> ${t("dontFollowWord")}</span>
-      <button class="x" data-del="${s.ts}" title="${t("delTitle")}">×</button></li>`).join("");
+      <span class="meta"><b>${s.followers}</b> ακόλουθοι · <b>${s.nonfollowers}</b> δεν σε ακολουθούν</span>
+      <button class="x" data-del="${s.ts}" title="Διαγραφή στιγμιότυπου">×</button></li>`).join("");
     el.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{
-      saveSnaps(loadSnaps().filter(s=>s.ts!==+b.dataset.del));renderSnaps();toast(t("deleted"));}));
+      saveSnaps(loadSnaps().filter(s=>s.ts!==+b.dataset.del));renderSnaps();toast("Το στιγμιότυπο διαγράφηκε");}));
   }
   function renderDelta(){
     const box=$("#delta");if(!lastDelta){box.classList.remove("show");return;}
     box.classList.add("show");
-    $("#deltaWhen").textContent=t("vs")+relDate(lastDelta.prev.ts);
+    $("#deltaWhen").textContent="σε σχέση με "+relDate(lastDelta.prev.ts);
     $("#deltaLostN").textContent=lastDelta.lost.length;
     $("#deltaGainN").textContent=lastDelta.gained.length;
-    const fmt=arr=>arr.length?arr.slice(0,40).map(x=>`<a href="${x.href}" target="_blank" rel="noopener">@${esc(x.value)}</a>`).join("  ")+(arr.length>40?t("more").replace("{n}",arr.length-40):""):"—";
+    const fmt=arr=>arr.length?arr.slice(0,40).map(x=>`<a href="${x.href}" target="_blank" rel="noopener">@${esc(x.value)}</a>`).join("  ")+(arr.length>40?" +"+(arr.length-40)+" ακόμη":""):"—";
     $("#deltaLost").innerHTML=fmt(lastDelta.lost);
     $("#deltaGain").innerHTML=fmt(lastDelta.gained);
   }
-
   function animateCount(el,target){
-    const dur=650,start=performance.now();
+    const dur=700,start=performance.now();
     function step(now){const p=Math.min(1,(now-start)/dur);const e=1-Math.pow(1-p,3);
       el.textContent=Math.round(target*e);if(p<1)requestAnimationFrame(step);}
     requestAnimationFrame(step);
   }
-
   function render(){
     $("#stats").innerHTML=`
-      <div class="stat flag"><div class="n" data-target="${data.nonfollowers.length}">0</div><div class="l">${t("lblNon")}</div></div>
-      <div class="stat"><div class="n" data-target="${data.followersCount}">0</div><div class="l">${t("lblFollowers")}</div></div>
-      <div class="stat"><div class="n" data-target="${data.followingCount}">0</div><div class="l">${t("lblFollowing")}</div></div>`;
+      <div class="stat flag"><div class="n" data-target="${data.nonfollowers.length}">0</div><div class="l">Δεν σε ακολουθούν πίσω</div></div>
+      <div class="stat"><div class="n" data-target="${data.followersCount}">0</div><div class="l">Ακόλουθοι</div></div>
+      <div class="stat"><div class="n" data-target="${data.followingCount}">0</div><div class="l">Ακολουθείς</div></div>`;
     $$("#stats .n").forEach(el=>animateCount(el,+el.dataset.target));
     $("#c-non").textContent=data.nonfollowers.length;
     $("#c-fans").textContent=data.fans.length;
     $("#c-mut").textContent=data.mutual.length;
-    $("#results").classList.add("show");$("#search").value="";$("#search").placeholder=t("searchPh");
+    $("#results").classList.add("show");$("#search").value="";
     renderDelta();renderSnaps();renderList();
   }
-
   function key(){return activeTab==="nonfollowers"?"nonfollowers":activeTab==="fans"?"fans":"mutual";}
   function currentRows(){const q=$("#search").value.trim().toLowerCase();return data[key()].filter(r=>!q||r.value.toLowerCase().includes(q));}
   function newlyLostSet(){if(activeTab!=="nonfollowers"||!lastDelta)return new Set();return new Set(lastDelta.lost.map(x=>x.value.toLowerCase()));}
@@ -666,29 +568,29 @@
     const rows=currentRows(),lostSet=newlyLostSet();
     if(!rows.length){
       const total=data[key()].length;
-      const msg=total?t("noMatch"):(activeTab==="nonfollowers"?t("emptyNon"):activeTab==="fans"?t("emptyFans"):t("emptyMut"));
+      const msg=total?"Καμία αντιστοίχιση.":(activeTab==="nonfollowers"?"Όλοι όσοι ακολουθείς σε ακολουθούν πίσω. 🎉":activeTab==="fans"?"Ακολουθείς πίσω όλους όσους σε ακολουθούν.":"Δεν βρέθηκαν αμοιβαίες ακολουθήσεις.");
       $("#list").innerHTML=`<li class="empty">${msg}</li>`;return;
     }
     $("#list").innerHTML=rows.map((r,i)=>{
       const isNew=lostSet.has(r.value.toLowerCase());
-      return `<li style="animation-delay:${Math.min(i*12,300)}ms"><span class="u"><span class="handle">@${esc(r.value)}</span>${isNew?'<span class="badge new">new</span>':''}</span>
-        <a href="${escAttr(r.href)}" target="_blank" rel="noopener">Open ↗</a></li>`;}).join("");
+      return `<li style="animation-delay:${Math.min(i*12,300)}ms"><span class="u"><span class="handle">@${esc(r.value)}</span>${isNew?'<span class="badge new">νέο</span>':''}</span>
+        <a href="${escAttr(r.href)}" target="_blank" rel="noopener">Άνοιγμα ↗</a></li>`;}).join("");
   }
   $$(".tab").forEach(tb=>tb.addEventListener("click",()=>{
     $$(".tab").forEach(x=>x.setAttribute("aria-selected","false"));
     tb.setAttribute("aria-selected","true");activeTab=tb.dataset.tab;renderList();}));
   $("#search").addEventListener("input",renderList);
 
-  $("#copy").addEventListener("click",()=>navigator.clipboard.writeText(currentRows().map(r=>"@"+r.value).join("\n")).then(()=>toast(t("copied"))));
+  $("#copy").addEventListener("click",()=>navigator.clipboard.writeText(currentRows().map(r=>"@"+r.value).join("\n")).then(()=>toast("Τα ονόματα αντιγράφηκαν ✓")));
   $("#csv").addEventListener("click",()=>{
     const csv="username,profile_url\n"+currentRows().map(r=>`${r.value},${r.href}`).join("\n");
     const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
-    a.download=`unfollowlens-${activeTab}.csv`;a.click();URL.revokeObjectURL(a.href);});
+    a.download=`unfollowers-gr-${activeTab}.csv`;a.click();URL.revokeObjectURL(a.href);});
 
   function esc(s){return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
   function escAttr(s){return String(s).replace(/"/g,"&quot;");}
 
-  setLang("el");
+  renderSnaps();
 })();
 </script>
 </body>
