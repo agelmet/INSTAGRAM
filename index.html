@@ -346,39 +346,85 @@
     pickedFile=f;fname.textContent="📦 "+f.name;analyzeBtn.disabled=false;showErr("");
   }
 
-  function extract(node){
-    const out=new Map();
-    const add=arr=>{if(!Array.isArray(arr))return;
-      for(const item of arr){const sld=item&&item.string_list_data;
-        if(Array.isArray(sld)&&sld.length){const v=sld[0];
-          if(v&&v.value)out.set(v.value.toLowerCase(),{value:v.value,href:v.href||("https://www.instagram.com/"+v.value)});}}};
-    if(Array.isArray(node))add(node);
-    else if(node&&typeof node==="object"){
-      const keyed=node.relationships_followers||node.relationships_following;
-      if(keyed)add(keyed);else for(const k in node)if(Array.isArray(node[k]))add(node[k]);
+  // Recursively pull EVERY string_list_data entry from any JSON shape,
+  // regardless of key names or how deeply it's nested. Robust to the
+  // many structural variants Instagram ships across export versions.
+  function extractDeep(node,out){
+    out=out||new Map();
+    if(Array.isArray(node)){
+      for(const item of node)extractDeep(item,out);
+    }else if(node&&typeof node==="object"){
+      if(Array.isArray(node.string_list_data)){
+        for(const v of node.string_list_data){
+          if(v&&v.value)out.set(String(v.value).toLowerCase(),{value:v.value,href:v.href||("https://www.instagram.com/"+v.value)});
+        }
+      }
+      for(const k in node){const val=node[k];if(val&&typeof val==="object")extractDeep(val,out);}
     }
     return out;
+  }
+  // Does this JSON look like a following list? Instagram tags it with
+  // relationships_following somewhere inside; followers use relationships_followers.
+  function jsonHasKey(node,key,depth){
+    if(depth>6||node==null)return false;
+    if(typeof node==="object"){
+      if(!Array.isArray(node)&&Object.prototype.hasOwnProperty.call(node,key))return true;
+      for(const k in node){if(node[k]&&typeof node[k]==="object"&&jsonHasKey(node[k],key,(depth||0)+1))return true;}
+    }
+    return false;
   }
 
   async function analyze(){
     showErr("");analyzeBtn.disabled=true;analyzeBtn.innerHTML="Reading…";
     try{
       const zip=await JSZip.loadAsync(pickedFile);
-      const followers=new Map(),following=new Map();let fF=false,fG=false;
+      const followers=new Map(),following=new Map();
+      const diag=[]; // human-readable record of what we found
       const files=Object.values(zip.files).filter(f=>!f.dir&&/\.json$/i.test(f.name));
+
+      if(!files.length){
+        throw new Error("This ZIP has no JSON files in it. You likely exported in <b>HTML</b> format. Request a new export and choose <b>JSON</b>.");
+      }
+
       for(const f of files){
         const base=f.name.split("/").pop().toLowerCase();
-        const isFwr=/^followers(_\d+)?\.json$/.test(base);
-        const isFwg=/^following(_\d+)?\.json$/.test(base);
-        if(!isFwr&&!isFwg)continue;
-        let j;try{j=JSON.parse(await f.async("string"));}catch{continue;}
-        const m=extract(j);
-        if(isFwr){fF=true;m.forEach((v,k)=>followers.set(k,v));}
-        else{fG=true;m.forEach((v,k)=>following.set(k,v));}
+        // Skip files that clearly aren't the two lists we want
+        const looksFollowers = /followers/.test(base) && !/follow_requests|pending|hashtag|recently|restricted|close_friends|removed|blocked/.test(base);
+        const looksFollowing = /^following/.test(base) || base==="following.json" || /following_\d+\.json$/.test(base);
+        const looksConnections = base==="connections.json"; // some exports bundle both here
+        if(!looksFollowers && !looksFollowing && !looksConnections) continue;
+
+        let j;
+        try{ j=JSON.parse(await f.async("string")); }
+        catch{ diag.push(base+": couldn't parse"); continue; }
+
+        // Decide direction by CONTENT first (most reliable), filename as fallback.
+        const isFollowing = jsonHasKey(j,"relationships_following",0) || (looksFollowing && !jsonHasKey(j,"relationships_followers",0));
+        const isFollowers = jsonHasKey(j,"relationships_followers",0) || (looksFollowers && !isFollowing);
+
+        if(looksConnections){
+          // connections.json holds both blocks; route each separately
+          const followingBlock = j.relationships_following ? {relationships_following:j.relationships_following} : null;
+          const followersBlock = j.relationships_followers ? {relationships_followers:j.relationships_followers} : null;
+          if(followingBlock){const m=extractDeep(followingBlock);m.forEach((v,k)=>following.set(k,v));diag.push(base+" → following: "+m.size);}
+          if(followersBlock){const m=extractDeep(followersBlock);m.forEach((v,k)=>followers.set(k,v));diag.push(base+" → followers: "+m.size);}
+          continue;
+        }
+
+        const m=extractDeep(j);
+        if(isFollowing){ m.forEach((v,k)=>following.set(k,v)); diag.push(base+" → following: "+m.size); }
+        else if(isFollowers){ m.forEach((v,k)=>followers.set(k,v)); diag.push(base+" → followers: "+m.size); }
       }
-      if(!fF&&!fG)throw new Error("Couldn't find the follower/following lists in this ZIP. Re-export in <b>JSON</b> format with <b>Followers and Following</b> selected.");
-      if(!fG)throw new Error("Found your followers but not your following list (<code>following.json</code>). Re-export with <b>both</b> lists checked.");
-      if(!fF)throw new Error("Found your following list but not your followers (<code>followers_1.json</code>). Re-export with <b>both</b> lists checked.");
+
+      if(!followers.size && !following.size){
+        throw new Error("Found JSON files but no follower/following entries. Make sure you checked <b>Followers and Following</b> and chose <b>JSON</b> when exporting.<br><br><span style='font-family:ui-monospace,monospace;font-size:12px'>Files seen: "+(diag.join("; ")||"none matched")+"</span>");
+      }
+      if(!following.size){
+        throw new Error("Got your followers ("+followers.size+") but the <b>following</b> list came back empty. Re-export with <b>Following</b> also checked.<br><br><span style='font-family:ui-monospace,monospace;font-size:12px'>Files seen: "+diag.join("; ")+"</span>");
+      }
+      if(!followers.size){
+        throw new Error("Got your following list ("+following.size+") but the <b>followers</b> list came back empty. Re-export with <b>Followers</b> also checked.<br><br><span style='font-family:ui-monospace,monospace;font-size:12px'>Files seen: "+diag.join("; ")+"</span>");
+      }
 
       const nonfollowers=[],mutual=[],fans=[];
       following.forEach((v,k)=>(followers.has(k)?mutual:nonfollowers).push(v));
